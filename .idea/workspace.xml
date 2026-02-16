@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a0ae39c-199a-47f9-aa64-088a90116211" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/database.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/schema.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/PropertyPoint.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PropertyPoint.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="5a0ae39c-199a-47f9-aa64-088a90116211" name="Changes" comment="property point" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -78,12 +70,25 @@
       <updated>1770985943010</updated>
       <workItem from="1770985944031" duration="1233000" />
       <workItem from="1771090850856" duration="279000" />
-      <workItem from="1771147315591" duration="3155000" />
+      <workItem from="1771147315591" duration="3184000" />
     </task>
+    <task id="LOCAL-00001" summary="property point">
+      <option name="closed" value="true" />
+      <created>1771151597334</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1771151597334</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="property point" />
+    <option name="LAST_COMMIT_MESSAGE" value="property point" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PropertyPoint$database.coverage" NAME="database Coverage Results" MODIFIED="1771149883562" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
