@@ -1,0 +1,164 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1>System Overview</h1>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Total Users</h3>
+        <p>{{ u_count }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Total Properties</h3>
+        <p>{{ p_count }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Total Bookings</h3>
+        <p>{{ b_count }}</p>
+    </div>
+</div>
+
+<h2>Recent Bookings</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Buyer</th>
+            <th>Property</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for b in bookings %}
+        <tr>
+            <td>{{ b['id'] }}</td>
+            <td>{{ b['buyer'] }}</td>
+            <td>{{ b['property_title'] }}</td>
+            <td>
+                <span class="badge" style="background:
+                    {% if b['status'] == 'Approved' %}#16a34a
+                    {% elif b['status'] == 'Rejected' %}#dc2626
+                    {% else %}#f59e0b{% endif %};">
+                    {{ b['status'] }}
+                </span>
+            </td>
+            <td id="actions-{{ b['id'] }}">
+                {% if b['status'] == 'Pending' %}
+                    <button onclick="updateStatus({{ b['id'] }}, 'approve')" class="btn-small" style="color: green; cursor: pointer;">Approve</button>
+                    <button onclick="updateStatus({{ b['id'] }}, 'reject')" class="btn-small" style="color: red; cursor: pointer;">Reject</button>
+                {% else %}
+                    Done
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>User Management</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr id="user-row-{{ u['id'] }}">
+            <td>{{ u['id'] }}</td>
+            <td>{{ u['username'] }}</td>
+            <td>{{ u['role'] }}</td>
+            <td>
+                <button onclick="deleteUser({{ u['id'] }}, '{{ u['username'] }}')"
+                        class="btn-small"
+                        style="color: #dc2626; border-color: #fca5a5;">
+                    Delete
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>All Properties</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Location</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in properties %}
+        <tr>
+            <td>{{ p['id'] }}</td>
+            <td>{{ p['title'] }}</td>
+            <td>{{ p['location'] }}</td>
+            <td>₹ {{ "{:,}".format(p['price']) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/**
+ * Updates booking status via AJAX to prevent page reload
+ */
+function updateStatus(bookingId, action) {
+    fetch(`/admin/${action}/${bookingId}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Locate the specific row containing the action button
+            const actionCell = document.getElementById(`actions-${bookingId}`);
+            const row = actionCell.closest('tr');
+
+            // Find the Status Badge (4th column)
+            const statusCell = row.querySelector('td:nth-child(4)');
+
+            // Set visual color based on action
+            const color = action === 'approve' ? '#16a34a' : '#dc2626';
+            statusCell.innerHTML = `<span class="badge" style="background: ${color};">${data.new_status}</span>`;
+
+            // Replace buttons with 'Done' to confirm completion
+            actionCell.innerHTML = 'Done';
+        }
+    })
+    .catch(err => {
+        console.error("Error updating booking:", err);
+        alert("Server error. Please try again.");
+    });
+}
+function deleteUser(userId, username) {
+    if (confirm(`Are you sure you want to delete user: ${username}?`)) {
+        fetch(`/admin/delete_user/${userId}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the row from the table instantly
+                const row = document.getElementById(`user-row-${userId}`);
+                row.style.opacity = '0';
+                setTimeout(() => row.remove(), 300);
+            } else {
+                alert(data.error || "Failed to delete user.");
+            }
+        })
+        .catch(err => console.error("Error:", err));
+    }
+}
+
+</script>
+{% endblock %}
