@@ -10,26 +10,19 @@ app.secret_key = "supersecretkey"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "database.db")
 
-
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
-
 def init_db():
     conn = get_db()
     cur = conn.cursor()
-    cur.execute(
-        "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, role TEXT)")
-    cur.execute(
-        "CREATE TABLE IF NOT EXISTS properties(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, location TEXT, price INTEGER, type TEXT, owner TEXT)")
-    cur.execute(
-        "CREATE TABLE IF NOT EXISTS bookings(id INTEGER PRIMARY KEY AUTOINCREMENT, buyer TEXT, property_title TEXT, status TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, role TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS properties(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, location TEXT, price INTEGER, type TEXT, owner TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS bookings(id INTEGER PRIMARY KEY AUTOINCREMENT, buyer TEXT, property_title TEXT, status TEXT)")
 
-    # Check if we need to seed
     if cur.execute("SELECT COUNT(*) FROM users").fetchone()[0] == 0:
-        # Note: In production, these should be hashed. For this first run, use Signup page.
         cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
                     ('admin', generate_password_hash('admin123'), 'Admin'))
 
@@ -44,9 +37,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-
 init_db()
-
 
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -61,7 +52,6 @@ def login():
         return render_template("login.html", error="Invalid credentials")
     return render_template("login.html")
 
-
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -71,6 +61,7 @@ def signup():
             conn.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
                          (username, generate_password_hash(pw), role))
             conn.commit()
+            flash("Signup successful! Please log in.")
             return redirect("/")
         except sqlite3.IntegrityError:
             return render_template("signup.html", error="Username already exists")
@@ -78,29 +69,25 @@ def signup():
             conn.close()
     return render_template("signup.html")
 
-
 @app.route("/buyer")
 def buyer():
     if session.get("role") != "Buyer": return redirect("/")
     city_query = request.args.get('city', '')
     conn = get_db()
     if city_query:
-        properties = conn.execute("SELECT * FROM properties WHERE location LIKE ?",
-                                  ('%' + city_query + '%',)).fetchall()
+        properties = conn.execute("SELECT * FROM properties WHERE location LIKE ?", ('%' + city_query + '%',)).fetchall()
     else:
         properties = conn.execute("SELECT * FROM properties").fetchall()
     conn.close()
     return render_template("buyer.html", properties=properties, search_term=city_query)
 
-
 @app.route("/book/<int:property_id>", methods=["POST"])
 def book(property_id):
-    # Ensure this matches the role name in your database exactly
-    if session.get("role") != "Buyer":
+    # Professional Case-Insensitive Role Check
+    if session.get("role", "").lower() != "buyer":
         return jsonify({"success": False, "error": "Only buyers can book visits"}), 403
 
     conn = get_db()
-    # Fetch property title to store in bookings
     prop = conn.execute("SELECT title FROM properties WHERE id=?", (property_id,)).fetchone()
     if prop:
         conn.execute("INSERT INTO bookings (buyer, property_title, status) VALUES (?, ?, ?)",
@@ -127,7 +114,7 @@ def admin():
     conn.close()
     return render_template("admin.html", users=users_list, properties=properties, bookings=bookings, **stats)
 
-
+# AJAX Booking updates
 @app.route("/admin/approve/<int:booking_id>")
 def approve(booking_id):
     conn = get_db()
@@ -135,7 +122,6 @@ def approve(booking_id):
     conn.commit()
     conn.close()
     return jsonify({"success": True, "new_status": "Approved"})
-
 
 @app.route("/admin/reject/<int:booking_id>")
 def reject(booking_id):
@@ -145,22 +131,10 @@ def reject(booking_id):
     conn.close()
     return jsonify({"success": True, "new_status": "Rejected"})
 
-
-@app.route("/admin/delete_user/<int:user_id>", methods=["POST"])
-def delete_user(user_id):
-    if session.get("role") != "Admin": return jsonify({"success": False}), 403
-    conn = get_db()
-    conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({"success": True})
-
-
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
-
 
 if __name__ == "__main__":
     app.run(debug=True)
