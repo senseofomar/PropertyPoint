@@ -15,17 +15,22 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "database.db")
 
+
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
+
 def init_db():
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, role TEXT)")
-    cur.execute("CREATE TABLE IF NOT EXISTS properties(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, location TEXT, price INTEGER, type TEXT, owner TEXT)")
-    cur.execute("CREATE TABLE IF NOT EXISTS bookings(id INTEGER PRIMARY KEY AUTOINCREMENT, buyer TEXT, property_title TEXT, status TEXT)")
+    cur.execute(
+        "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, role TEXT)")
+    cur.execute(
+        "CREATE TABLE IF NOT EXISTS properties(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, location TEXT, price INTEGER, type TEXT, owner TEXT, img_url TEXT)")
+    cur.execute(
+        "CREATE TABLE IF NOT EXISTS bookings(id INTEGER PRIMARY KEY AUTOINCREMENT, buyer TEXT, property_title TEXT, status TEXT)")
 
     if cur.execute("SELECT COUNT(*) FROM users").fetchone()[0] == 0:
         cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
@@ -37,13 +42,17 @@ def init_db():
         for i in range(50):
             city, ptype = random.choice(cities), random.choice(types)
             price = random.randint(1000000, 20000000)
-            cur.execute("INSERT INTO properties (title, location, price, type, owner) VALUES (?, ?, ?, ?, ?)",
-                        (f"Premium {ptype} in {city}", city, price, ptype, "system"))
+            cur.execute(
+                "INSERT INTO properties (title, location, price, type, owner, img_url) VALUES (?, ?, ?, ?, ?, ?)",
+                (f"Premium {ptype} in {city}", city, price, ptype, "system", ""))
     conn.commit()
     conn.close()
 
+
 init_db()
 
+
+# --- AUTHENTICATION ROUTES ---
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -56,6 +65,7 @@ def login():
             return redirect(f"/{role.lower()}")
         return render_template("login.html", error="Invalid credentials")
     return render_template("login.html")
+
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -73,6 +83,39 @@ def signup():
             conn.close()
     return render_template("signup.html")
 
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+
+# --- BUYER ROUTES ---
+@app.route("/buyer")
+def buyer():
+    if session.get("role") != "Buyer": return redirect("/")
+
+    city_query = request.args.get('city', '')
+    max_price = request.args.get('max_price', type=int)
+
+    conn = get_db()
+    query = "SELECT * FROM properties WHERE 1=1"
+    params = []
+
+    if city_query:
+        query += " AND location LIKE ?"
+        params.append('%' + city_query + '%')
+    if max_price:
+        query += " AND price <= ?"
+        params.append(max_price)
+
+    query += " ORDER BY id DESC"
+    properties = conn.execute(query, params).fetchall()
+    conn.close()
+
+    return render_template("buyer.html", properties=properties, search_term=city_query, max_price=max_price)
+
+
 @app.route("/book/<int:property_id>", methods=["POST"])
 def book(property_id):
     if session.get("role", "").lower() != "buyer":
@@ -88,47 +131,17 @@ def book(property_id):
     conn.close()
     return jsonify({"success": False, "error": "Property not found"}), 404
 
-@app.route("/admin")
-def admin():
-    if session.get("role") != "Admin": return redirect("/")
+
+@app.route("/my_bookings")
+def my_bookings():
+    if session.get("role") != "Buyer": return redirect("/")
     conn = get_db()
-    users_list = conn.execute("SELECT * FROM users").fetchall()
-    properties = conn.execute("SELECT * FROM properties").fetchall()
-    bookings = conn.execute("SELECT * FROM bookings").fetchall()
-    stats = {
-        "u_count": conn.execute("SELECT COUNT(*) FROM users").fetchone()[0],
-        "p_count": conn.execute("SELECT COUNT(*) FROM properties").fetchone()[0],
-        "b_count": conn.execute("SELECT COUNT(*) FROM bookings").fetchone()[0]
-    }
+    user_bookings = conn.execute("SELECT * FROM bookings WHERE buyer = ?", (session["user"],)).fetchall()
     conn.close()
-    return render_template("admin.html", users=users_list, properties=properties, bookings=bookings, **stats)
-
-@app.route("/admin/approve/<int:booking_id>")
-def approve(booking_id):
-    conn = get_db()
-    conn.execute("UPDATE bookings SET status = 'Approved' WHERE id = ?", (booking_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({"success": True, "new_status": "Approved"})
-
-@app.route("/admin/reject/<int:booking_id>")
-def reject(booking_id):
-    conn = get_db()
-    conn.execute("UPDATE bookings SET status = 'Rejected' WHERE id = ?", (booking_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({"success": True, "new_status": "Rejected"})
-
-@app.route("/admin/delete_user/<int:user_id>", methods=["POST"])
-def delete_user(user_id):
-    if session.get("role") != "Admin": return jsonify({"success": False}), 403
-    conn = get_db()
-    conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({"success": True})
+    return render_template("my_bookings.html", bookings=user_bookings)
 
 
+# --- SELLER ROUTES ---
 @app.route("/seller", methods=["GET", "POST"])
 def seller():
     if session.get("role") != "Seller": return redirect("/")
@@ -138,8 +151,8 @@ def seller():
             "type"]
         file = request.files.get('image')
         img_filename = ""
-        if file:
-            img_filename = f"prop_{random.randint(1000, 9999)}.jpg"
+        if file and file.filename != '':
+            img_filename = f"prop_{random.randint(1000, 9999)}_{file.filename}"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], img_filename))
 
         conn.execute("INSERT INTO properties (title, location, price, type, owner, img_url) VALUES (?,?,?,?,?,?)",
@@ -151,19 +164,60 @@ def seller():
     return render_template("seller.html", properties=properties)
 
 
-@app.route("/buyer")
-def buyer():
-    if session.get("role") != "Buyer": return redirect("/")
+@app.route("/seller/delete/<int:prop_id>", methods=["POST"])
+def delete_listing(prop_id):
+    if session.get("role") != "Seller": return jsonify({"success": False}), 403
     conn = get_db()
-    # Now retrieves ALL properties (System generated + Seller listed)
-    properties = conn.execute("SELECT * FROM properties ORDER BY id DESC").fetchall()
+    conn.execute("DELETE FROM properties WHERE id = ? AND owner = ?", (prop_id, session["user"]))
+    conn.commit()
     conn.close()
-    return render_template("buyer.html", properties=properties)
+    return jsonify({"success": True})
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/")
+
+# --- ADMIN ROUTES ---
+@app.route("/admin")
+def admin():
+    if session.get("role") != "Admin": return redirect("/")
+    conn = get_db()
+    users_list = conn.execute("SELECT * FROM users").fetchall()
+    properties = conn.execute("SELECT * FROM properties").fetchall()
+    bookings = conn.execute("SELECT * FROM bookings").fetchall()
+    stats = {
+        "u_count": len(users_list),
+        "p_count": len(properties),
+        "b_count": len(bookings)
+    }
+    conn.close()
+    return render_template("admin.html", users=users_list, properties=properties, bookings=bookings, **stats)
+
+
+@app.route("/admin/approve/<int:booking_id>")
+def approve(booking_id):
+    conn = get_db()
+    conn.execute("UPDATE bookings SET status = 'Approved' WHERE id = ?", (booking_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"success": True, "new_status": "Approved"})
+
+
+@app.route("/admin/reject/<int:booking_id>")
+def reject(booking_id):
+    conn = get_db()
+    conn.execute("UPDATE bookings SET status = 'Rejected' WHERE id = ?", (booking_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"success": True, "new_status": "Rejected"})
+
+
+@app.route("/admin/delete_user/<int:user_id>", methods=["POST"])
+def delete_user(user_id):
+    if session.get("role") != "Admin": return jsonify({"success": False}), 403
+    conn = get_db()
+    conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"success": True})
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+
+{% block title %}Find Properties{% endblock %}
+
+{% block content %}
+<div class="hero-section" style="background:var(--primary); color:white; padding:2rem; border-radius:12px; margin-bottom:2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1>Find Your Dream Property</h1>
+            <p>Explore premium listings across major cities in India</p>
+        </div>
+        <a href="/my_bookings" class="btn-small" style="background: white; color: var(--primary); text-decoration: none; padding: 10px 20px;">My Bookings</a>
+    </div>
+</div>
+
+<div class="filter-container" style="background:white; padding:1.5rem; border-radius:12px; margin-bottom:2rem; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+    <form method="GET" action="/buyer" style="display:flex; gap:10px; align-items:center;">
+        <input type="text" name="city" placeholder="Search city..." value="{{ search_term if search_term }}" style="flex-grow:1; margin-bottom:0;">
+
+        <select name="max_price" style="width: auto; margin-bottom: 0;">
+            <option value="">Any Price</option>
+            <option value="5000000" {% if max_price == 5000000 %}selected{% endif %}>Under 50 Lakhs</option>
+            <option value="10000000" {% if max_price == 10000000 %}selected{% endif %}>Under 1 Crore</option>
+            <option value="20000000" {% if max_price == 20000000 %}selected{% endif %}>Under 2 Crores</option>
+        </select>
+
+        <button type="submit" style="width:auto; background:var(--primary); color:white; padding:0 20px;">🔍 Filter</button>
+        <a href="/buyer" style="padding:10px; color:gray; text-decoration:none;">Clear</a>
+    </form>
+</div>
+
+<div id="js-flash" style="display:none; background:#dcfce7; color:#166534; padding:1rem; border-radius:8px; margin-bottom:1rem;">Visit scheduled!</div>
+
+<div class="property-grid">
+    {% for p in properties %}
+    <div class="card" id="property-{{ p['id'] }}">
+        {% if p['img_url'] %}
+            <img src="{{ url_for('static', filename='uploads/' + p['img_url']) }}" style="width: 100%; height: 200px; object-fit: cover;">
+        {% else %}
+            {% set img_url = "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688" %}
+            {% if p['type'] == 'Villa' %}{% set img_url = "https://images.unsplash.com/photo-1613977257363-707ba9348227" %}
+            {% elif p['type'] == 'Plot' %}{% set img_url = "https://images.unsplash.com/photo-1500382017468-9049fed747ef" %}
+            {% elif p['type'] == 'Apartment' %}{% set img_url = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267" %}
+            {% endif %}
+            <img src="{{ img_url }}" style="width: 100%; height: 200px; object-fit: cover;">
+        {% endif %}
+
+        <div class="card-content">
+            <h3>{{ p['title'] }}</h3>
+            <p>📍 {{ p['location'] }}</p>
+            <p class="price">₹ {{ "{:,}".format(p['price']) }}</p>
+            <span class="badge" style="background:#64748b; color:white; padding:2px 8px; border-radius:4px; font-size:12px;">{{ p['type'] }}</span>
+        </div>
+        <button class="book-btn" onclick="scheduleVisit({{ p['id'] }})">Schedule Visit</button>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function scheduleVisit(id) {
+    const btn = document.querySelector(`#property-${id} .book-btn`);
+    btn.innerText = "Processing...";
+    btn.disabled = true;
+    fetch(`/book/${id}`, {method:'POST'}).then(r => r.json()).then(data => {
+        if(data.success) {
+            btn.innerText = "Scheduled ✓";
+            btn.style.background = "#94a3b8";
+            document.getElementById('js-flash').style.display = 'block';
+            setTimeout(() => document.getElementById('js-flash').style.display = 'none', 3000);
+        } else {
+            alert(data.error || "Failed");
+            btn.innerText = "Schedule Visit";
+            btn.disabled = false;
+        }
+    });
+}
+</script>
+{% endblock %}
