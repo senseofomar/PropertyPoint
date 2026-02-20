@@ -7,6 +7,11 @@ import random
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
+# Configuration for Image Uploads
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "database.db")
 
@@ -61,7 +66,6 @@ def signup():
             conn.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
                          (username, generate_password_hash(pw), role))
             conn.commit()
-            flash("Signup successful! Please log in.")
             return redirect("/")
         except sqlite3.IntegrityError:
             return render_template("signup.html", error="Username already exists")
@@ -69,24 +73,10 @@ def signup():
             conn.close()
     return render_template("signup.html")
 
-@app.route("/buyer")
-def buyer():
-    if session.get("role") != "Buyer": return redirect("/")
-    city_query = request.args.get('city', '')
-    conn = get_db()
-    if city_query:
-        properties = conn.execute("SELECT * FROM properties WHERE location LIKE ?", ('%' + city_query + '%',)).fetchall()
-    else:
-        properties = conn.execute("SELECT * FROM properties").fetchall()
-    conn.close()
-    return render_template("buyer.html", properties=properties, search_term=city_query)
-
 @app.route("/book/<int:property_id>", methods=["POST"])
 def book(property_id):
-    # Professional Case-Insensitive Role Check
     if session.get("role", "").lower() != "buyer":
         return jsonify({"success": False, "error": "Only buyers can book visits"}), 403
-
     conn = get_db()
     prop = conn.execute("SELECT title FROM properties WHERE id=?", (property_id,)).fetchone()
     if prop:
@@ -95,7 +85,6 @@ def book(property_id):
         conn.commit()
         conn.close()
         return jsonify({"success": True})
-
     conn.close()
     return jsonify({"success": False, "error": "Property not found"}), 404
 
@@ -114,7 +103,6 @@ def admin():
     conn.close()
     return render_template("admin.html", users=users_list, properties=properties, bookings=bookings, **stats)
 
-# AJAX Booking updates
 @app.route("/admin/approve/<int:booking_id>")
 def approve(booking_id):
     conn = get_db()
@@ -130,6 +118,47 @@ def reject(booking_id):
     conn.commit()
     conn.close()
     return jsonify({"success": True, "new_status": "Rejected"})
+
+@app.route("/admin/delete_user/<int:user_id>", methods=["POST"])
+def delete_user(user_id):
+    if session.get("role") != "Admin": return jsonify({"success": False}), 403
+    conn = get_db()
+    conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"success": True})
+
+
+@app.route("/seller", methods=["GET", "POST"])
+def seller():
+    if session.get("role") != "Seller": return redirect("/")
+    conn = get_db()
+    if request.method == "POST":
+        title, loc, price, ptype = request.form["title"], request.form["location"], request.form["price"], request.form[
+            "type"]
+        file = request.files.get('image')
+        img_filename = ""
+        if file:
+            img_filename = f"prop_{random.randint(1000, 9999)}.jpg"
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], img_filename))
+
+        conn.execute("INSERT INTO properties (title, location, price, type, owner, img_url) VALUES (?,?,?,?,?,?)",
+                     (title, loc, price, ptype, session["user"], img_filename))
+        conn.commit()
+
+    properties = conn.execute("SELECT * FROM properties WHERE owner=?", (session["user"],)).fetchall()
+    conn.close()
+    return render_template("seller.html", properties=properties)
+
+
+@app.route("/buyer")
+def buyer():
+    if session.get("role") != "Buyer": return redirect("/")
+    conn = get_db()
+    # Now retrieves ALL properties (System generated + Seller listed)
+    properties = conn.execute("SELECT * FROM properties ORDER BY id DESC").fetchall()
+    conn.close()
+    return render_template("buyer.html", properties=properties)
 
 @app.route("/logout")
 def logout():
