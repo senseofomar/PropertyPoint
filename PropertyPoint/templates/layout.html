@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}PropertyPoint Gold{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="logo">PropertyPoint <span style="color: var(--primary); font-weight: 300;">Gold</span></div>
+    <div class="nav-links">
+        {% if session.get('user') %}
+            <span style="color: var(--text-muted); margin-right: 15px;">Welcome, <strong style="color: var(--text-main);">{{ session['user'] }}</strong></span>
+            <span class="badge" style="background: #f1f5f9; color: var(--text-main); border: 1px solid #e2e8f0; margin-right: 15px;">{{ session['role'] }}</span>
+            <a href="/logout" class="logout-btn">Logout</a>
+        {% endif %}
+    </div>
+</nav>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div id="flash-modal" class="modal-overlay active">
+        <div class="modal-content">
+            <div class="modal-icon" style="font-size: 3rem; margin-bottom: 15px;">✨</div>
+            <h2 style="color: var(--text-main); margin: 0 0 10px 0;">Success</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px; line-height: 1.5;">{{ messages[0] }}</p>
+            <button onclick="document.getElementById('flash-modal').classList.remove('active')" class="btn-primary">Continue</button>
+        </div>
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+<footer style="text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.9rem; margin-top: 40px; border-top: 1px solid var(--border);">
+    © 2026 PropertyPoint Gold | Premium Real Estate Platform
+</footer>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

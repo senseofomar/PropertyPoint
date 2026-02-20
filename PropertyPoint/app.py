@@ -70,19 +70,27 @@ def login():
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        username, pw, role = request.form["username"], request.form["password"], request.form["role"]
+        username = request.form["username"]
+        pw = request.form["password"]
+        confirm_pw = request.form.get("confirm_password") # NEW
+        role = request.form["role"]
+
+        # Backend validation for matching passwords
+        if pw != confirm_pw:
+            return render_template("signup.html", error="Passwords do not match. Please try again.")
+
         conn = get_db()
         try:
             conn.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
                          (username, generate_password_hash(pw), role))
             conn.commit()
+            flash("Account created successfully! Please log in.")
             return redirect("/")
         except sqlite3.IntegrityError:
             return render_template("signup.html", error="Username already exists")
         finally:
             conn.close()
     return render_template("signup.html")
-
 
 @app.route("/logout")
 def logout():
@@ -155,9 +163,11 @@ def seller():
             img_filename = f"prop_{random.randint(1000, 9999)}_{file.filename}"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], img_filename))
 
-        conn.execute("INSERT INTO properties (title, location, price, type, owner, img_url) VALUES (?,?,?,?,?,?)",
-                     (title, loc, price, ptype, session["user"], img_filename))
-        conn.commit()
+            # Look for this in app.py under the POST method inside def seller():
+            conn.execute("INSERT INTO properties (title, location, price, type, owner, img_url) VALUES (?,?,?,?,?,?)",
+                         (title, loc, price, ptype, session["user"], img_filename))
+            conn.commit()
+            flash("Congratulations! Your property is now live and visible to buyers.")  # ADD THIS LINE
 
     properties = conn.execute("SELECT * FROM properties WHERE owner=?", (session["user"],)).fetchall()
     conn.close()

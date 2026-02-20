@@ -29,11 +29,40 @@
     </form>
 </div>
 
-<div id="js-flash" style="display:none; background:#dcfce7; color:#166534; padding:1rem; border-radius:8px; margin-bottom:1rem;">Visit scheduled!</div>
+<div id="js-flash-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-icon">🏡</div>
+        <h2 style="color: var(--dark); margin: 0 0 10px 0;">Congratulations!</h2>
+        <p style="color: #64748b; margin-bottom: 20px;">Your visit request has been received! Our real estate agent will call you shortly to confirm the exact date and time for your tour.</p>
+        <button onclick="document.getElementById('js-flash-modal').classList.remove('active')" style="border-radius: 20px; background: var(--success);">Got it!</button>
+    </div>
+</div>
+
+<div id="details-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 550px; text-align: left;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 id="modal-title" style="margin: 0; color: var(--dark);">Property Title</h2>
+            <span style="cursor: pointer; font-size: 1.5rem; color: #94a3b8;" onclick="document.getElementById('details-modal').classList.remove('active')">&times;</span>
+        </div>
+
+        <span id="modal-badge" class="badge" style="background: var(--primary); margin-bottom: 15px; display: inline-block;">Type</span>
+        <p>📍 <strong id="modal-location">Location</strong></p>
+
+        <p style="color: #475569; line-height: 1.6; margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 8px;">
+            Discover your dream home! This premium <strong id="modal-type-text">property</strong> offers state-of-the-art amenities, spacious interiors, and a prime location. Perfect for families and professionals seeking a modern lifestyle with easy access to city centers, schools, and shopping districts. 24/7 security, dedicated parking, and scenic views included.
+        </p>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px;">
+            <h3 id="modal-price" style="color: var(--success); font-size: 1.8rem; margin: 0;">₹ 0</h3>
+            <button id="modal-book-btn" class="book-btn" style="width: auto; padding: 12px 25px; border-radius: 8px;">Schedule a Visit</button>
+        </div>
+    </div>
+</div>
 
 <div class="property-grid">
     {% for p in properties %}
     <div class="card" id="property-{{ p['id'] }}">
+
         {% if p['img_url'] %}
             <img src="{{ url_for('static', filename='uploads/' + p['img_url']) }}" style="width: 100%; height: 200px; object-fit: cover;">
         {% else %}
@@ -49,9 +78,19 @@
             <h3>{{ p['title'] }}</h3>
             <p>📍 {{ p['location'] }}</p>
             <p class="price">₹ {{ "{:,}".format(p['price']) }}</p>
-            <span class="badge" style="background:#64748b; color:white; padding:2px 8px; border-radius:4px; font-size:12px;">{{ p['type'] }}</span>
+            <span class="badge" style="background:#64748b; color:white; padding:2px 8px; border-radius:4px; font-size:12px; margin-bottom: 15px; display: inline-block;">{{ p['type'] }}</span>
+
+            <div style="display: flex; gap: 10px; margin-top: auto;">
+                <button type="button" class="btn-small" style="flex: 1; background: #f1f5f9; color: var(--dark); border: none;"
+                        onclick="openDetails(`{{ p['title'] }}`, `{{ p['location'] }}`, `{{ p['price'] }}`, `{{ p['type'] }}`, {{ p['id'] }})">
+                    View Details
+                </button>
+                <button type="button" class="book-btn" style="flex: 1; margin-top: 0; padding: 10px; border-radius: 6px;"
+                        onclick="scheduleVisit({{ p['id'] }})">
+                    Book
+                </button>
+            </div>
         </div>
-        <button class="book-btn" onclick="scheduleVisit({{ p['id'] }})">Schedule Visit</button>
     </div>
     {% endfor %}
 </div>
@@ -59,22 +98,52 @@
 
 {% block scripts %}
 <script>
+// Open the Details Modal
+function openDetails(title, location, price, type, id) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-location').innerText = location;
+    // Format price with commas
+    document.getElementById('modal-price').innerText = '₹ ' + parseInt(price).toLocaleString('en-IN');
+    document.getElementById('modal-badge').innerText = type;
+    document.getElementById('modal-type-text').innerText = type.toLowerCase();
+
+    // Set the book button in the modal to trigger the specific property ID
+    const bookBtn = document.getElementById('modal-book-btn');
+    bookBtn.setAttribute('onclick', `scheduleVisit(${id}); document.getElementById('details-modal').classList.remove('active');`);
+
+    document.getElementById('details-modal').classList.add('active');
+}
+
+// Updated Schedule Visit (With Agent Call Text & Error Handling)
 function scheduleVisit(id) {
     const btn = document.querySelector(`#property-${id} .book-btn`);
-    btn.innerText = "Processing...";
-    btn.disabled = true;
-    fetch(`/book/${id}`, {method:'POST'}).then(r => r.json()).then(data => {
+    // Optional chaining in case the button was triggered from inside the modal
+    const originalText = btn ? btn.innerText : "Book";
+
+    if (btn) {
+        btn.innerText = "Processing...";
+        btn.disabled = true;
+    }
+
+    fetch(`/book/${id}`, {method:'POST'})
+    .then(r => r.json())
+    .then(data => {
         if(data.success) {
-            btn.innerText = "Scheduled ✓";
-            btn.style.background = "#94a3b8";
-            document.getElementById('js-flash').style.display = 'block';
-            setTimeout(() => document.getElementById('js-flash').style.display = 'none', 3000);
+            if (btn) {
+                btn.innerText = "Request Sent ✓";
+                btn.style.background = "#94a3b8";
+            }
+            // Show the centralized beautiful modal
+            document.getElementById('js-flash-modal').classList.add('active');
         } else {
             alert(data.error || "Failed");
-            btn.innerText = "Schedule Visit";
-            btn.disabled = false;
+            if (btn) {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         }
-    });
+    })
+    .catch(err => console.error("Error booking visit:", err));
 }
 </script>
 {% endblock %}

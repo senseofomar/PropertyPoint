@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block title %}Join PropertyPoint Gold{% endblock %}
+
+{% block content %}
+<div class="auth-body">
+    <div class="login-card">
+        <h1 style="color: #1e293b; font-weight: 800; margin-bottom: 5px;">✨ Join Us</h1>
+        <p style="color: #475569; margin-bottom: 25px;">Join our premium real estate network</p>
+
+        {% if error %}
+            <p style="color: var(--danger); background: #fef2f2; padding: 10px; border-radius: 8px;">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            <input type="text" name="username" placeholder="Choose a Username" required>
+            
+            <div class="password-wrapper">
+                <input type="password" id="pw" name="password" placeholder="Create a Password" required>
+                <span class="eye-icon" onclick="togglePassword('pw', this)">👁️</span>
+            </div>
+
+            <div class="password-wrapper">
+                <input type="password" id="cpw" name="confirm_password" placeholder="Confirm Password" required>
+                <span class="eye-icon" onclick="togglePassword('cpw', this)">👁️</span>
+            </div>
+
+            <label style="display:block; text-align:left; margin-bottom:5px; font-size:13px; color:#475569; font-weight:600;">I want to register as a:</label>
+            <select name="role">
+                <option value="Buyer">Buyer (Looking for property)</option>
+                <option value="Seller">Seller (Listing property)</option>
+            </select>
+
+            <button type="submit" style="margin-top:15px; padding: 14px;">Create Account</button>
+        </form>
+
+        <p style="margin-top:25px; color: #475569; font-size: 0.9rem;">
+            Already have an account? <a href="/" style="color:var(--primary); text-decoration:none; font-weight: 600;">Login here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function togglePassword(inputId, icon) {
+    const input = document.getElementById(inputId);
+    if (input.type === "password") {
+        input.type = "text";
+        icon.innerText = "🙈"; // Change icon when visible
+    } else {
+        input.type = "password";
+        icon.innerText = "👁️"; // Change back
+    }
+}
+</script>
+{% endblock %}

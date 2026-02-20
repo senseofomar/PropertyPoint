@@ -1,151 +1,91 @@
 {% extends "layout.html" %}
 
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}Admin Control Panel{% endblock %}
 
 {% block content %}
-<h1 style="margin-bottom: 25px;">System Overview</h1>
-
+<h1 style="text-shadow: var(--glow);">System Overview</h1>
 <div class="stats-grid">
-    <div class="stat-card">
-        <h3>Total Users</h3>
-        <p>{{ u_count }}</p>
-    </div>
-    <div class="stat-card">
-        <h3>Total Properties</h3>
-        <p>{{ p_count }}</p>
-    </div>
-    <div class="stat-card">
-        <h3>Total Bookings</h3>
-        <p>{{ b_count }}</p>
-    </div>
+    <div class="stat-card"><h3>Users</h3><p>{{ u_count }}</p></div>
+    <div class="stat-card"><h3>Properties</h3><p>{{ p_count }}</p></div>
+    <div class="stat-card"><h3>Bookings</h3><p>{{ b_count }}</p></div>
 </div>
 
-<h2 style="margin-top: 40px;">Manage Bookings</h2>
-<div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Buyer</th>
-                <th>Property</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for b in bookings %}
-            <tr>
-                <td>{{ b['id'] }}</td>
-                <td>{{ b['buyer'] }}</td>
-                <td style="font-weight: 500;">{{ b['property_title'] }}</td>
-                <td id="status-{{ b['id'] }}">
-                    <span class="badge" style="background:
-                        {% if b['status'] == 'Approved' %}#16a34a
-                        {% elif b['status'] == 'Rejected' %}#dc2626
-                        {% else %}#f59e0b{% endif %};">
-                        {{ b['status'] }}
-                    </span>
-                </td>
-                <td id="actions-{{ b['id'] }}">
-                    {% if b['status'] == 'Pending' %}
-                    <div style="display: flex; gap: 8px;">
-                        <button onclick="updateStatus({{ b['id'] }}, 'approve')" class="btn-small action-approve">Approve</button>
-                        <button onclick="updateStatus({{ b['id'] }}, 'reject')" class="btn-small action-reject">Reject</button>
-                    </div>
-                    {% else %}
-                    <span style="color: #94a3b8;">Done</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+<h2 style="margin-top: 40px; text-shadow: var(--glow);">Manage Bookings</h2>
+<table>
+    <thead><tr><th>ID</th><th>Buyer</th><th>Property</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+        {% for b in bookings %}
+        <tr>
+            <td>{{ b['id'] }}</td>
+            <td style="color: #fff; font-weight: 500;">{{ b['buyer'] }}</td>
+            <td style="color: #fff;">{{ b['property_title'] }}</td>
+            <td id="status-{{ b['id'] }}">
+                <span class="badge" style="background: {% if b['status'] == 'Approved' %}var(--success){% elif b['status'] == 'Rejected' %}var(--danger){% else %}var(--accent){% endif %}; color: #000;">
+                    {{ b['status'] }}
+                </span>
+            </td>
+            <td id="actions-{{ b['id'] }}">
+                {% if b['status'] == 'Pending' %}
+                <button onclick="updateStatus({{ b['id'] }}, 'approve')" class="btn-small" style="color: var(--success); border-color: var(--success);">Approve</button>
+                <button onclick="updateStatus({{ b['id'] }}, 'reject')" class="btn-small" style="color: var(--danger); border-color: var(--danger);">Reject</button>
+                {% else %}<span style="color: var(--text-muted);">Done</span>{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-<h2 style="margin-top: 40px;">Manage Users</h2>
-<div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Role</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for u in users %}
-            <tr id="user-row-{{ u['id'] }}">
-                <td>{{ u['id'] }}</td>
-                <td>{{ u['username'] }}</td>
-                <td><span class="badge" style="background: #64748b;">{{ u['role'] }}</span></td>
-                <td>
-                    <button onclick="deleteUser({{ u['id'] }}, '{{ u['username'] }}')" class="btn-small action-reject">Delete</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+<h2 style="margin-top: 40px; text-shadow: var(--glow);">Manage Users</h2>
+<table>
+    <thead><tr><th>ID</th><th>Username</th><th>Role</th><th>Action</th></tr></thead>
+    <tbody>
+        {% for u in users %}
+        <tr id="user-row-{{ u['id'] }}">
+            <td>{{ u['id'] }}</td>
+            <td style="color: #fff; font-weight: 500;">{{ u['username'] }}</td>
+            <td><span class="badge" style="background: var(--surface-border); color: #fff;">{{ u['role'] }}</span></td>
+            <td><button onclick="deleteUser({{ u['id'] }})" class="btn-small" style="color: var(--danger); border-color: var(--danger);">Delete</button></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-<h2 style="margin-top: 40px;">Property Inventory</h2>
-<div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Location</th>
-                <th>Price</th>
-                <th>Type</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in properties %}
-            <tr>
-                <td>{{ p['id'] }}</td>
-                <td>{{ p['title'] }}</td>
-                <td>{{ p['location'] }}</td>
-                <td style="color: #16a34a; font-weight: bold;">₹ {{ "{:,}".format(p['price']) }}</td>
-                <td><span class="badge-outline">{{ p['type'] }}</span></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
+<h2 style="margin-top: 40px; text-shadow: var(--glow);">Property Inventory</h2>
+<table>
+    <thead><tr><th>ID</th><th>Title</th><th>Location</th><th>Price</th></tr></thead>
+    <tbody>
+        {% for p in properties %}
+        <tr>
+            <td>{{ p['id'] }}</td>
+            <td style="color: #fff; font-weight: 500;">{{ p['title'] }}</td>
+            <td>{{ p['location'] }}</td>
+            <td style="color: var(--accent); font-weight: 700;">₹ {{ "{:,}".format(p['price']) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
 
 {% block scripts %}
 <script>
-// Logic to Approve/Reject Bookings without reload
 function updateStatus(id, action) {
-    fetch(`/admin/${action}/${id}`)
-    .then(r => r.json())
-    .then(data => {
+    fetch(`/admin/${action}/${id}`).then(r => r.json()).then(data => {
         if(data.success) {
-            const color = action === 'approve' ? '#16a34a' : '#dc2626';
-            document.getElementById(`status-${id}`).innerHTML =
-                `<span class="badge" style="background:${color}">${data.new_status}</span>`;
-            document.getElementById(`actions-${id}`).innerHTML =
-                '<span style="color: #94a3b8;">Done</span>';
+            // Using the CSS variables for the neon effect
+            const color = action === 'approve' ? 'var(--success)' : 'var(--danger)';
+            document.getElementById(`status-${id}`).innerHTML = `<span class="badge" style="background:${color}; color: #000;">${data.new_status}</span>`;
+            document.getElementById(`actions-${id}`).innerHTML = '<span style="color: var(--text-muted);">Done</span>';
         }
-    })
-    .catch(err => console.error("Update failed:", err));
+    });
 }
 
-// Logic to Delete Users without reload
-function deleteUser(id, name) {
-    if(confirm(`Are you sure you want to permanently delete ${name}?`)) {
-        fetch(`/admin/delete_user/${id}`, {method:'POST'})
-        .then(r => r.json())
-        .then(data => {
+function deleteUser(id) {
+    if(confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+        fetch(`/admin/delete_user/${id}`, {method:'POST'}).then(r => r.json()).then(data => {
             if(data.success) {
                 const row = document.getElementById(`user-row-${id}`);
                 row.style.opacity = '0';
                 setTimeout(() => row.remove(), 300);
-            } else {
-                alert(data.error || "Delete failed");
             }
         });
     }
