@@ -25,12 +25,10 @@ def get_db():
 def init_db():
     conn = get_db()
     cur = conn.cursor()
-    cur.execute(
-        "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, role TEXT)")
-    cur.execute(
-        "CREATE TABLE IF NOT EXISTS properties(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, location TEXT, price INTEGER, type TEXT, owner TEXT, img_url TEXT)")
-    cur.execute(
-        "CREATE TABLE IF NOT EXISTS bookings(id INTEGER PRIMARY KEY AUTOINCREMENT, buyer TEXT, property_title TEXT, status TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, role TEXT)")
+    # ADDED 'description TEXT' to the properties table below
+    cur.execute("CREATE TABLE IF NOT EXISTS properties(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, location TEXT, price INTEGER, type TEXT, owner TEXT, img_url TEXT, description TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS bookings(id INTEGER PRIMARY KEY AUTOINCREMENT, buyer TEXT, property_title TEXT, status TEXT)")
 
     if cur.execute("SELECT COUNT(*) FROM users").fetchone()[0] == 0:
         cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
@@ -39,15 +37,15 @@ def init_db():
     if cur.execute("SELECT COUNT(*) FROM properties").fetchone()[0] == 0:
         cities = ["Mumbai", "Pune", "Latur", "Hyderabad", "Nagpur", "Delhi", "Bangalore", "Chennai"]
         types = ["Villa", "Apartment", "Commercial Office", "Plot", "Penthouse", "Farmhouse"]
+        default_desc = "Premium property with modern amenities, spacious layout, and excellent connectivity. Ideal for those seeking a high-quality lifestyle."
         for i in range(50):
             city, ptype = random.choice(cities), random.choice(types)
             price = random.randint(1000000, 20000000)
-            cur.execute(
-                "INSERT INTO properties (title, location, price, type, owner, img_url) VALUES (?, ?, ?, ?, ?, ?)",
-                (f"Premium {ptype} in {city}", city, price, ptype, "system", ""))
+            # ADDED default_desc to the system seed data
+            cur.execute("INSERT INTO properties (title, location, price, type, owner, img_url, description) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        (f"Premium {ptype} in {city}", city, price, ptype, "system", "", default_desc))
     conn.commit()
     conn.close()
-
 
 init_db()
 
@@ -157,22 +155,24 @@ def seller():
     if request.method == "POST":
         title, loc, price, ptype = request.form["title"], request.form["location"], request.form["price"], request.form[
             "type"]
+        description = request.form.get("description", "No description provided.")  # NEW
+
         file = request.files.get('image')
         img_filename = ""
         if file and file.filename != '':
             img_filename = f"prop_{random.randint(1000, 9999)}_{file.filename}"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], img_filename))
 
-            # Look for this in app.py under the POST method inside def seller():
-            conn.execute("INSERT INTO properties (title, location, price, type, owner, img_url) VALUES (?,?,?,?,?,?)",
-                         (title, loc, price, ptype, session["user"], img_filename))
-            conn.commit()
-            flash("Congratulations! Your property is now live and visible to buyers.")  # ADD THIS LINE
+        # ADDED description to the INSERT statement
+        conn.execute(
+            "INSERT INTO properties (title, location, price, type, owner, img_url, description) VALUES (?,?,?,?,?,?,?)",
+            (title, loc, price, ptype, session["user"], img_filename, description))
+        conn.commit()
+        flash("Congratulations! Your property is now live and visible to buyers.")
 
     properties = conn.execute("SELECT * FROM properties WHERE owner=?", (session["user"],)).fetchall()
     conn.close()
     return render_template("seller.html", properties=properties)
-
 
 @app.route("/seller/delete/<int:prop_id>", methods=["POST"])
 def delete_listing(prop_id):

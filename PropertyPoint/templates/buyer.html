@@ -29,9 +29,11 @@
             <span style="cursor: pointer; font-size: 1.5rem; color: var(--text-muted); line-height: 1;" onclick="document.getElementById('details-modal').classList.remove('active')">&times;</span>
         </div>
         <p style="color: var(--text-muted); margin-bottom: 1.5rem;">📍 <span id="modal-location">Location</span></p>
+
         <div style="background: var(--bg-page); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
-            <p style="margin: 0; line-height: 1.6;">Premium <strong id="modal-type-text">property</strong> with modern amenities, spacious layout, and excellent connectivity. Ideal for those seeking a high-quality lifestyle.</p>
+            <p id="modal-desc" style="margin: 0; line-height: 1.6; color: var(--text-main);"></p>
         </div>
+
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3 id="modal-price" style="margin: 0; font-size: 1.8rem;">₹ 0</h3>
             <button id="modal-book-btn" style="width: auto;">Request Visit</button>
@@ -69,7 +71,10 @@
             <span class="badge" style="background: var(--bg-page); border: 1px solid var(--border); width: fit-content; margin-bottom: 1.5rem;">{{ p['type'] }}</span>
 
             <div style="display: flex; gap: 10px; margin-top: auto;">
-                <button type="button" class="btn-small" style="flex: 1; padding: 12px;" onclick="openDetails(`{{ p['title'] }}`, `{{ p['location'] }}`, `{{ p['price'] }}`, `{{ p['type'] }}`, {{ p['id'] }})">Details</button>
+                <button type="button" class="btn-small" style="flex: 1; padding: 12px;"
+                        onclick="openDetails(`{{ p['title'] }}`, `{{ p['location'] }}`, `{{ p['price'] }}`, `{{ p['type'] }}`, {{ p['id'] }}, `{{ p['description'] }}`)">
+                    Details
+                </button>
                 <button type="button" class="book-btn" style="flex: 1; padding: 12px; border-radius: 6px;" onclick="scheduleVisit({{ p['id'] }})">Book</button>
             </div>
         </div>
@@ -80,30 +85,59 @@
 
 {% block scripts %}
 <script>
-function openDetails(title, location, price, type, id) {
+// Main function to populate and show the property details modal
+function openDetails(title, location, price, type, id, description) {
     document.getElementById('modal-title').innerText = title;
     document.getElementById('modal-location').innerText = location;
+    // Format price with local currency formatting
     document.getElementById('modal-price').innerText = '₹ ' + parseInt(price).toLocaleString('en-IN');
-    document.getElementById('modal-type-text').innerText = type.toLowerCase();
 
+    // Inject the real description from the database.
+    // Fallback text if description is empty or missing.
+    document.getElementById('modal-desc').innerText = description || "Premium property with modern amenities and scenic views.";
+
+    // Link the "Request Visit" button in the modal to the specific property ID
     const bookBtn = document.getElementById('modal-book-btn');
     bookBtn.setAttribute('onclick', `scheduleVisit(${id}); document.getElementById('details-modal').classList.remove('active');`);
 
+    // Show the modal
     document.getElementById('details-modal').classList.add('active');
 }
 
+// AJAX function to handle visit scheduling
 function scheduleVisit(id) {
     const btn = document.querySelector(`#property-${id} .book-btn`);
     const originalText = btn ? btn.innerText : "Book";
-    if (btn) { btn.innerText = "Wait..."; btn.disabled = true; }
 
-    fetch(`/book/${id}`, {method:'POST'}).then(r => r.json()).then(data => {
+    if (btn) {
+        btn.innerText = "Wait...";
+        btn.disabled = true;
+    }
+
+    fetch(`/book/${id}`, {method:'POST'})
+    .then(r => r.json())
+    .then(data => {
         if(data.success) {
-            if (btn) { btn.innerText = "Sent ✓"; btn.style.background = "var(--success)"; btn.style.color = "white"; }
+            if (btn) {
+                btn.innerText = "Sent ✓";
+                btn.style.background = "var(--success)";
+                btn.style.color = "white";
+            }
+            // Show the "Congratulations/Request Sent" success modal
             document.getElementById('js-flash-modal').classList.add('active');
         } else {
-            alert(data.error || "Failed");
-            if (btn) { btn.innerText = originalText; btn.disabled = false; }
+            alert(data.error || "Failed to schedule visit.");
+            if (btn) {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+    })
+    .catch(err => {
+        console.error("Booking error:", err);
+        if (btn) {
+            btn.innerText = originalText;
+            btn.disabled = false;
         }
     });
 }
