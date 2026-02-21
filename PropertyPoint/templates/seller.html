@@ -1,55 +1,54 @@
 {% extends "layout.html" %}
-
 {% block title %}Seller Dashboard{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 style="margin-bottom: 20px;">Seller Dashboard</h1>
+<div style="display: flex; gap: 3rem; align-items: flex-start;">
 
-    <div class="seller-form" style="max-width: 600px; margin: 0 auto 3rem auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 15px rgba(0,0,0,0.05);">
-        <h3 style="margin-bottom: 15px;">List New Property</h3>
+    <div style="background: var(--surface); padding: 2.5rem; border-radius: 12px; border: 1px solid var(--border); width: 400px; flex-shrink: 0; position: sticky; top: 100px;">
+        <h2 style="margin-top: 0; margin-bottom: 1.5rem;">List Property</h2>
         <form method="POST" enctype="multipart/form-data">
-            <input type="text" name="title" placeholder="Property Title (e.g., 3BHK Penthouse)" required>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" name="location" placeholder="City" required>
-                <input type="number" name="price" placeholder="Price (₹)" required>
-            </div>
+            <label>Property Title</label>
+            <input type="text" name="title" required>
+
+            <label>City</label>
+            <input type="text" name="location" required>
+
+            <label>Price (₹)</label>
+            <input type="number" name="price" required>
+
+            <label>Property Type</label>
             <select name="type" required>
-                <option value="" disabled selected>Select Property Type</option>
-                <option>Apartment</option>
-                <option>Villa</option>
-                <option>Commercial Office</option>
-                <option>Plot</option>
-                <option>Penthouse</option>
-                <option>Farmhouse</option>
+                <option value="" disabled selected>Select...</option>
+                <option>Apartment</option><option>Villa</option><option>Commercial Office</option>
+                <option>Plot</option><option>Penthouse</option><option>Farmhouse</option>
             </select>
-            <label style="font-size: 0.8rem; color: gray; display: block; margin-top: 10px;">Upload Image:</label>
-            <input type="file" name="image" accept="image/*" required>
-            <button type="submit" class="book-btn" style="margin-top: 15px; background: var(--primary);">Post Property</button>
+
+            <label>Upload Image</label>
+            <input type="file" name="image" accept="image/*" required style="padding: 9px;">
+
+            <button type="submit" style="margin-top: 1rem;">Post Listing</button>
         </form>
     </div>
 
-    <h2 style="margin-bottom: 20px;">Your Active Listings</h2>
-    <div class="property-grid">
-        {% for p in properties %}
-        <div class="card" id="my-property-{{ p['id'] }}">
-            {% if p['img_url'] %}
-                <img src="{{ url_for('static', filename='uploads/' + p['img_url']) }}" style="width:100%; height:200px; object-fit:cover;">
-            {% else %}
-                <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688" style="width:100%; height:200px; object-fit:cover;">
-            {% endif %}
-            <div class="card-content">
-                <h3>{{ p['title'] }}</h3>
-                <p>📍 {{ p['location'] }}</p>
-                <p class="price">₹ {{ "{:,}".format(p['price']) }}</p>
-                <span class="badge" style="background: var(--primary);">{{ p['type'] }}</span>
-
-                <button onclick="deleteMyProperty({{ p['id'] }})" class="btn-small" style="color:red; margin-top:15px; background: #fff5f5; border: 1px solid #ffc1c1; width: 100%;">
-                    Delete Listing
-                </button>
+    <div style="flex-grow: 1;">
+        <h2 style="margin-top: 0;">Your Active Listings</h2>
+        <div class="property-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+            {% for p in properties %}
+            <div class="card" id="my-property-{{ p['id'] }}">
+                {% if p['img_url'] %}
+                    <img src="{{ url_for('static', filename='uploads/' + p['img_url']) }}">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688">
+                {% endif %}
+                <div class="card-content">
+                    <h3>{{ p['title'] }}</h3>
+                    <p>📍 {{ p['location'] }}</p>
+                    <p class="price">₹ {{ "{:,}".format(p['price']) }}</p>
+                    <button onclick="deleteMyProperty({{ p['id'] }})" class="btn-small" style="color: var(--danger); width: 100%;">Remove Listing</button>
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </div>
 {% endblock %}
@@ -57,19 +56,10 @@
 {% block scripts %}
 <script>
 function deleteMyProperty(id) {
-    if(confirm("Are you sure you want to permanently remove this listing?")) {
-        fetch(`/seller/delete/${id}`, { method: 'POST' })
-        .then(r => r.json())
-        .then(data => {
-            if(data.success) {
-                const element = document.getElementById(`my-property-${id}`);
-                element.style.opacity = '0';
-                setTimeout(() => element.remove(), 300);
-            } else {
-                alert("Failed to delete the property.");
-            }
-        })
-        .catch(err => console.error("Error:", err));
+    if(confirm("Remove this listing permanently?")) {
+        fetch(`/seller/delete/${id}`, { method: 'POST' }).then(r => r.json()).then(data => {
+            if(data.success) { document.getElementById(`my-property-${id}`).remove(); }
+        });
     }
 }
 </script>

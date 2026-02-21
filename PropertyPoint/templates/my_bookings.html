@@ -1,43 +1,27 @@
 {% extends "layout.html" %}
-
 {% block title %}My Bookings{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h1 style="text-shadow: var(--glow);">My Visit Requests</h1>
-        <a href="/buyer" class="btn-small" style="text-decoration: none; color: #000; background: var(--accent);">Back to Properties</a>
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Property Name</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for b in bookings %}
-            <tr>
-                <td style="font-weight: 500; color: #fff;">{{ b['property_title'] }}</td>
-                <td>
-                    <span class="badge" style="background:
-                        {% if b['status'] == 'Approved' %}var(--success)
-                        {% elif b['status'] == 'Rejected' %}var(--danger)
-                        {% else %}var(--accent){% endif %}; color: #000;">
-                        {{ b['status'] }}
-                    </span>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="2" style="text-align: center; color: var(--text-muted); padding: 3rem;">
-                    You haven't requested any visits yet.<br>
-                    <a href="/buyer" style="color: var(--accent); text-decoration: none; margin-top: 10px; display: inline-block;">Browse Properties</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1 style="margin: 0;">My Visit Requests</h1>
+    <a href="/buyer" class="btn-small">Back to Properties</a>
 </div>
+
+<table>
+    <thead><tr><th>Property Name</th><th>Status</th></tr></thead>
+    <tbody>
+        {% for b in bookings %}
+        <tr>
+            <td style="font-weight: 500;">{{ b['property_title'] }}</td>
+            <td>
+                <span class="badge" style="background: {% if b['status'] == 'Approved' %}#d1fae5; color: #065f46;{% elif b['status'] == 'Rejected' %}#fee2e2; color: #991b1b;{% else %}#fef3c7; color: #92400e;{% endif %};">
+                    {{ b['status'] }}
+                </span>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 3rem;">No visit requests found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
