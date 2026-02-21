@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a0ae39c-199a-47f9-aa64-088a90116211" name="Changes" comment="property point">
-      <change afterPath="$PROJECT_DIR$/PropertyPoint/app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PropertyPoint/database.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PropertyPoint/static/style.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PropertyPoint/templates/admin.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PropertyPoint/templates/buyer.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PropertyPoint/templates/layout.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PropertyPoint/templates/login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PropertyPoint/templates/seller.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PropertyPoint/templates/signup.html" afterDir="false" />
+    <list default="true" id="5a0ae39c-199a-47f9-aa64-088a90116211" name="Changes" comment="time to make it shine">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/PropertyPoint/schema.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PropertyPoint/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/PropertyPoint/static/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PropertyPoint/templates/seller.html" beforeDir="false" afterPath="$PROJECT_DIR$/PropertyPoint/templates/seller.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +92,13 @@
       <workItem from="1771258019996" duration="41000" />
       <workItem from="1771345895048" duration="5400000" />
       <workItem from="1771397760698" duration="8888000" />
-      <workItem from="1771488603028" duration="4837000" />
+      <workItem from="1771488603028" duration="9081000" />
+      <workItem from="1771520275653" duration="2668000" />
+      <workItem from="1771524206059" duration="372000" />
+      <workItem from="1771574634881" duration="7404000" />
+      <workItem from="1771587239896" duration="2246000" />
+      <workItem from="1771595208797" duration="3713000" />
+      <workItem from="1771667355054" duration="1870000" />
     </task>
     <task id="LOCAL-00001" summary="property point">
       <option name="closed" value="true" />
@@ -150,7 +148,87 @@
       <option name="project" value="LOCAL" />
       <updated>1771398442112</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="property point">
+      <option name="closed" value="true" />
+      <created>1771494667942</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1771494667942</updated>
+    </task>
+    <task id="LOCAL-00008" summary="property point">
+      <option name="closed" value="true" />
+      <created>1771494678343</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1771494678343</updated>
+    </task>
+    <task id="LOCAL-00009" summary="property point">
+      <option name="closed" value="true" />
+      <created>1771494687883</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1771494687883</updated>
+    </task>
+    <task id="LOCAL-00010" summary="changed the flexbox and improved the buyer admin seller functionality">
+      <option name="closed" value="true" />
+      <created>1771522489817</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1771522489817</updated>
+    </task>
+    <task id="LOCAL-00011" summary="fixed the invalid credentials error">
+      <option name="closed" value="true" />
+      <created>1771575186098</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1771575186098</updated>
+    </task>
+    <task id="LOCAL-00012" summary="seller posting now visible to buyer as well">
+      <option name="closed" value="true" />
+      <created>1771582119579</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1771582119579</updated>
+    </task>
+    <task id="LOCAL-00013" summary="final functionalities added">
+      <option name="closed" value="true" />
+      <created>1771589828342</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1771589828342</updated>
+    </task>
+    <task id="LOCAL-00014" summary="final ui polishing has begun">
+      <option name="closed" value="true" />
+      <created>1771598944748</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1771598944748</updated>
+    </task>
+    <task id="LOCAL-00015" summary="time to make it shine">
+      <option name="closed" value="true" />
+      <created>1771668166362</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1771668166362</updated>
+    </task>
+    <task id="LOCAL-00016" summary="time to make it shine">
+      <option name="closed" value="true" />
+      <created>1771669312087</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1771669312087</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -158,10 +236,16 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="property point" />
-    <option name="LAST_COMMIT_MESSAGE" value="property point" />
+    <MESSAGE value="changed the flexbox and improved the buyer admin seller functionality" />
+    <MESSAGE value="fixed the invalid credentials error" />
+    <MESSAGE value="seller posting now visible to buyer as well" />
+    <MESSAGE value="final functionalities added" />
+    <MESSAGE value="final ui polishing has begun" />
+    <MESSAGE value="time to make it shine" />
+    <option name="LAST_COMMIT_MESSAGE" value="time to make it shine" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PropertyPoint$database.coverage" NAME="database Coverage Results" MODIFIED="1771349985787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/PropertyPoint$app.coverage" NAME="app Coverage Results" MODIFIED="1771494297540" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PropertyPoint" />
+    <SUITE FILE_PATH="coverage/PropertyPoint$app.coverage" NAME="app Coverage Results" MODIFIED="1771667934748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PropertyPoint" />
   </component>
 </project>
