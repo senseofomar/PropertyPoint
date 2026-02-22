@@ -1,36 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PropertyPoint Gold - Login</title>
+    <title>Login | PropertyPoint Gold</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
 </head>
 <body class="auth-body">
 
 <div class="login-card">
-    <h1 style="color: #1e293b; font-weight: 800; margin-bottom: 5px;">🏡 PropertyPoint</h1>
-    <p style="color: #475569; margin-bottom: 25px;">Secure Real Estate Portal</p>
+    <div class="logo" style="text-align: center; margin-bottom: 1.5rem;">PropertyPoint</div>
+    <h2 style="margin-bottom: 0.5rem; font-weight: 600;">Sign in</h2>
+    <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">To see personalized recommendations and your activity.</p>
 
     {% if error %}
-        <p style="color: var(--danger); background: #fef2f2; padding: 10px; border-radius: 8px; font-weight: 500;">{{ error }}</p>
+        <p style="color: var(--danger); font-size: 0.85rem; font-weight: 500;">{{ error }}</p>
     {% endif %}
 
     <form method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
+        <label style="font-size: 0.85rem; font-weight: 600;">Username</label>
+        <input type="text" name="username" placeholder="Enter username" required>
 
+        <label style="font-size: 0.85rem; font-weight: 600;">Password</label>
+        <input type="password" name="password" placeholder="Enter password" required>
+
+        <label style="font-size: 0.85rem; font-weight: 600;">Your Role</label>
         <select name="role">
             <option>Buyer</option>
             <option>Seller</option>
             <option>Admin</option>
         </select>
 
-        <button type="submit" style="margin-top: 10px; padding: 14px;">Log In</button>
+        <button type="submit" style="width: 100%;">Sign In</button>
     </form>
 
-    <p style="margin-top:25px; color: #475569; font-size: 0.9rem;">
-        New to PropertyPoint? <a href="/signup" style="color:var(--primary); text-decoration:none; font-weight: 600;">Create an account</a>
-    </p>
+    <div style="border-top: 1px solid var(--border); margin-top: 2rem; padding-top: 1.5rem; text-align: center;">
+        <p style="font-size: 0.9rem;">New here? <a href="/signup" style="color: var(--z-blue); text-decoration: none; font-weight: 600;">Create an account</a></p>
+    </div>
 </div>
 
 </body>
