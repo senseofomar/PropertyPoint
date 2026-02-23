@@ -96,6 +96,51 @@ def logout():
     return redirect("/")
 
 
+@app.route("/admin-portal", methods=["GET", "POST"])
+def admin_portal():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        conn = get_db()
+        # Hardcode the role check to 'Admin' for security
+        user = conn.execute("SELECT * FROM users WHERE username=? AND role='Admin'", (username,)).fetchone()
+        conn.close()
+
+        if user and check_password_hash(user['password'], password):
+            session["user"] = username
+            session["role"] = "Admin"
+            return redirect("/admin")
+
+        return render_template("admin_login.html", error="Authentication failed.")
+
+    return render_template("admin_login.html")
+
+
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        username = request.form["username"]
+        new_password = request.form["new_password"]
+
+        conn = get_db()
+        user = conn.execute("SELECT * FROM users WHERE username=?", (username,)).fetchone()
+
+        if user:
+            # Update the user's password with a new hash
+            conn.execute("UPDATE users SET password=? WHERE username=?",
+                         (generate_password_hash(new_password), username))
+            conn.commit()
+            conn.close()
+
+            flash("Password reset successfully! Please log in with your new password.")
+            return redirect("/")
+        else:
+            conn.close()
+            return render_template("forgot_password.html", error="Username not found in our system.")
+
+    return render_template("forgot_password.html")
+
 # --- BUYER ROUTES ---
 @app.route("/buyer")
 def buyer():
