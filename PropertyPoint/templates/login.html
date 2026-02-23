@@ -7,33 +7,35 @@
 <body class="auth-body">
 
 <div class="login-card">
-    <div class="logo" style="text-align: center; margin-bottom: 1.5rem;">PropertyPoint</div>
-    <h2 style="margin-bottom: 0.5rem; font-weight: 600;">Sign in</h2>
-    <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">To see personalized recommendations and your activity.</p>
+    <div class="logo" style="justify-content: center; margin-bottom: 2rem; font-size: 1.8rem;">PropertyPoint Gold</div>
+    <h2 style="text-align: center;">Welcome Back</h2>
+    <p style="text-align: center;">Enter your credentials to access your account.</p>
 
     {% if error %}
-        <p style="color: var(--danger); font-size: 0.85rem; font-weight: 500;">{{ error }}</p>
+        <div style="background: #fef2f2; color: var(--danger); padding: 12px; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; font-weight: 600; font-size: 0.9rem;">
+            {{ error }}
+        </div>
     {% endif %}
 
     <form method="POST">
-        <label style="font-size: 0.85rem; font-weight: 600;">Username</label>
+        <label>Username</label>
         <input type="text" name="username" placeholder="Enter username" required>
 
-        <label style="font-size: 0.85rem; font-weight: 600;">Password</label>
+        <label>Password</label>
         <input type="password" name="password" placeholder="Enter password" required>
 
-        <label style="font-size: 0.85rem; font-weight: 600;">Your Role</label>
+        <label>Your Role</label>
         <select name="role">
             <option>Buyer</option>
             <option>Seller</option>
             <option>Admin</option>
         </select>
 
-        <button type="submit" style="width: 100%;">Sign In</button>
+        <button type="submit" style="margin-top: 1rem;">Sign In</button>
     </form>
 
-    <div style="border-top: 1px solid var(--border); margin-top: 2rem; padding-top: 1.5rem; text-align: center;">
-        <p style="font-size: 0.9rem;">New here? <a href="/signup" style="color: var(--z-blue); text-decoration: none; font-weight: 600;">Create an account</a></p>
+    <div style="margin-top: 2rem; text-align: center;">
+        <p style="font-size: 0.95rem;">New here? <a href="/signup" style="color: var(--accent); text-decoration: none; font-weight: 700;">Create an account</a></p>
     </div>
 </div>
 
