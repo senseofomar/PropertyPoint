@@ -21,43 +21,54 @@
     </div>
 </div>
 
-<div style="background: var(--surface); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm); margin-bottom: 3rem;">
-    <h2 style="margin-top: 0; margin-bottom: 1.5rem;">Manage Bookings</h2>
-    <div style="overflow-x: auto;">
-        <table>
-            <thead><tr><th>ID</th><th>Buyer</th><th>Property</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody>
-                {% for b in bookings %}
-                <tr>
-                    <td style="color: var(--text-muted); font-weight: 600;">#{{ b['id'] }}</td>
-                    <td style="font-weight: 700;">{{ b['buyer'] }}</td>
-                    <td>{{ b['property_title'] }}</td>
-                    <td id="status-{{ b['id'] }}">
-                        <span class="badge" style="background: {% if b['status'] == 'Approved' %}#dcfce7; color: #166534;{% elif b['status'] == 'Rejected' %}#fee2e2; color: #991b1b;{% else %}#fef3c7; color: #92400e;{% endif %};">
-                            {{ b['status'] }}
-                        </span>
-                    </td>
-                    <td id="actions-{{ b['id'] }}">
-                        {% if b['status'] == 'Pending' %}
-                        <div style="display: flex; gap: 8px;">
-                            <button onclick="updateStatus({{ b['id'] }}, 'approve')" class="btn-small" style="color: var(--success); border-color: var(--success); background: #f0fdf4;">Approve</button>
-                            <button onclick="updateStatus({{ b['id'] }}, 'reject')" class="btn-small" style="color: var(--danger); border-color: var(--danger); background: #fef2f2;">Reject</button>
-                        </div>
-                        {% else %}<span style="color: var(--text-muted); font-weight: 600; font-size: 0.9rem;">Processed</span>{% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+<div style="display: flex; flex-direction: column; gap: 3rem; margin-bottom: 3rem;">
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
     <div style="background: var(--surface); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
-        <h2 style="margin-top: 0; margin-bottom: 1.5rem;">User Directory</h2>
-        <div style="overflow-x: auto;">
-            <table>
-                <thead><tr><th>ID</th><th>Username</th><th>Role</th><th>Action</th></tr></thead>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <h2 style="margin: 0;">Manage Bookings</h2>
+            <input type="text" id="searchBookings" onkeyup="filterTable('searchBookings', 'tableBookings')" placeholder="🔍 Search bookings..." style="width: 280px; margin: 0; padding: 10px 16px; border-radius: 30px;">
+        </div>
+        <div style="overflow-y: auto; max-height: 400px; padding-right: 10px;">
+            <table style="width: 100%;" id="tableBookings">
+                <thead style="position: sticky; top: 0; z-index: 10;">
+                    <tr><th>ID</th><th>Buyer</th><th>Property</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for b in bookings %}
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 600;">#{{ b['id'] }}</td>
+                        <td style="font-weight: 700;">{{ b['buyer'] }}</td>
+                        <td>{{ b['property_title'] }}</td>
+                        <td id="status-{{ b['id'] }}">
+                            <span class="badge" style="background: {% if b['status'] == 'Approved' %}#dcfce7; color: #166534;{% elif b['status'] == 'Rejected' %}#fee2e2; color: #991b1b;{% else %}#fef3c7; color: #92400e;{% endif %};">
+                                {{ b['status'] }}
+                            </span>
+                        </td>
+                        <td id="actions-{{ b['id'] }}">
+                            {% if b['status'] == 'Pending' %}
+                            <div style="display: flex; gap: 8px;">
+                                <button onclick="updateStatus({{ b['id'] }}, 'approve')" class="btn-small" style="color: var(--success); border-color: var(--success); background: #f0fdf4;">Approve</button>
+                                <button onclick="updateStatus({{ b['id'] }}, 'reject')" class="btn-small" style="color: var(--danger); border-color: var(--danger); background: #fef2f2;">Reject</button>
+                            </div>
+                            {% else %}<span style="color: var(--text-muted); font-weight: 600; font-size: 0.9rem;">Processed</span>{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="background: var(--surface); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <h2 style="margin: 0;">User Directory</h2>
+            <input type="text" id="searchUsers" onkeyup="filterTable('searchUsers', 'tableUsers')" placeholder="🔍 Search users..." style="width: 280px; margin: 0; padding: 10px 16px; border-radius: 30px;">
+        </div>
+        <div style="overflow-y: auto; max-height: 400px; padding-right: 10px;">
+            <table style="width: 100%;" id="tableUsers">
+                <thead style="position: sticky; top: 0; z-index: 10;">
+                    <tr><th>ID</th><th>Username</th><th>Role</th><th>Action</th></tr>
+                </thead>
                 <tbody>
                     {% for u in users %}
                     <tr id="user-row-{{ u['id'] }}">
@@ -73,10 +84,15 @@
     </div>
 
     <div style="background: var(--surface); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
-        <h2 style="margin-top: 0; margin-bottom: 1.5rem;">Inventory Snapshot</h2>
-        <div style="overflow-x: auto;">
-            <table>
-                <thead><tr><th>ID</th><th>Title</th><th>Price</th></tr></thead>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <h2 style="margin: 0;">Inventory Snapshot</h2>
+            <input type="text" id="searchProperties" onkeyup="filterTable('searchProperties', 'tableProperties')" placeholder="🔍 Search properties..." style="width: 280px; margin: 0; padding: 10px 16px; border-radius: 30px;">
+        </div>
+        <div style="overflow-y: auto; max-height: 400px; padding-right: 10px;">
+            <table style="width: 100%;" id="tableProperties">
+                <thead style="position: sticky; top: 0; z-index: 10;">
+                    <tr><th>ID</th><th>Title</th><th>Price</th></tr>
+                </thead>
                 <tbody>
                     {% for p in properties %}
                     <tr>
@@ -89,11 +105,33 @@
             </table>
         </div>
     </div>
+
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
+// Instant Client-Side Table Filter
+function filterTable(inputId, tableId) {
+    const input = document.getElementById(inputId);
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById(tableId);
+    const tbody = table.getElementsByTagName("tbody")[0];
+    const rows = tbody.getElementsByTagName("tr");
+
+    for (let i = 0; i < rows.length; i++) {
+        // Grab all text content inside the row (searches across all columns)
+        let rowText = rows[i].textContent || rows[i].innerText;
+
+        if (rowText.toLowerCase().indexOf(filter) > -1) {
+            rows[i].style.display = "";
+        } else {
+            rows[i].style.display = "none";
+        }
+    }
+}
+
+// Existing Admin Actions
 function updateStatus(id, action) {
     fetch(`/admin/${action}/${id}`).then(r => r.json()).then(data => {
         if(data.success) {

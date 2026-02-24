@@ -25,10 +25,12 @@ def get_db():
 def init_db():
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, role TEXT)")
-    # ADDED 'description TEXT' to the properties table below
-    cur.execute("CREATE TABLE IF NOT EXISTS properties(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, location TEXT, price INTEGER, type TEXT, owner TEXT, img_url TEXT, description TEXT)")
-    cur.execute("CREATE TABLE IF NOT EXISTS bookings(id INTEGER PRIMARY KEY AUTOINCREMENT, buyer TEXT, property_title TEXT, status TEXT)")
+    cur.execute(
+        "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, role TEXT)")
+    cur.execute(
+        "CREATE TABLE IF NOT EXISTS properties(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, location TEXT, price INTEGER, type TEXT, owner TEXT, img_url TEXT, description TEXT)")
+    cur.execute(
+        "CREATE TABLE IF NOT EXISTS bookings(id INTEGER PRIMARY KEY AUTOINCREMENT, buyer TEXT, property_title TEXT, status TEXT)")
 
     if cur.execute("SELECT COUNT(*) FROM users").fetchone()[0] == 0:
         cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
@@ -37,13 +39,36 @@ def init_db():
     if cur.execute("SELECT COUNT(*) FROM properties").fetchone()[0] == 0:
         cities = ["Mumbai", "Pune", "Latur", "Hyderabad", "Nagpur", "Delhi", "Bangalore", "Chennai"]
         types = ["Villa", "Apartment", "Commercial Office", "Plot", "Penthouse", "Farmhouse"]
-        default_desc = "Premium property with modern amenities, spacious layout, and excellent connectivity. Ideal for those seeking a high-quality lifestyle."
+
+        # New dynamic vocabulary
+        adjectives = ["Exquisite", "Luxurious", "Modern", "Spacious", "Elegant", "Premium", "Ultra-luxury"]
+        features = {
+            "Villa": ["a private pool, landscaped gardens, and smart home automation.",
+                      "breathtaking views, high ceilings, and a state-of-the-art kitchen."],
+            "Apartment": ["24/7 security, an infinity pool, and premium clubhouse access.",
+                          "panoramic city views, imported marble flooring, and concierge service."],
+            "Commercial Office": ["high-speed elevators, ample parking, and prime main-road visibility.",
+                                  "grade-A infrastructure, cafeteria space, and 100% power backup."],
+            "Plot": ["clear titles, excellent road connectivity, and high appreciation potential.",
+                     "a serene environment, gated security, and proximity to upcoming tech hubs."],
+            "Penthouse": ["a private terrace, floor-to-ceiling windows, and exclusive elevator access.",
+                          "unmatched luxury, an open-concept layout, and a private jacuzzi."],
+            "Farmhouse": ["lush greenery, organic fruit orchards, and a cozy outhouse.",
+                          "sprawling acres of land, a private lake, and rustic luxury architecture."]
+        }
+
         for i in range(50):
             city, ptype = random.choice(cities), random.choice(types)
             price = random.randint(1000000, 20000000)
-            # ADDED default_desc to the system seed data
-            cur.execute("INSERT INTO properties (title, location, price, type, owner, img_url, description) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                        (f"Premium {ptype} in {city}", city, price, ptype, "system", "", default_desc))
+
+            # Generate the dynamic description
+            adj = random.choice(adjectives)
+            feat = random.choice(features[ptype])
+            dynamic_desc = f"This {adj.lower()} {ptype.lower()} is located in the highly sought-after area of {city}. It features {feat} Perfect for discerning buyers looking for a high-quality lifestyle."
+
+            cur.execute(
+                "INSERT INTO properties (title, location, price, type, owner, img_url, description) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (f"{adj} {ptype} in {city}", city, price, ptype, "system", "", dynamic_desc))
     conn.commit()
     conn.close()
 
@@ -147,6 +172,7 @@ def buyer():
     if session.get("role") != "Buyer": return redirect("/")
 
     city_query = request.args.get('city', '')
+    min_price = request.args.get('min_price', type=int)
     max_price = request.args.get('max_price', type=int)
 
     conn = get_db()
@@ -156,6 +182,9 @@ def buyer():
     if city_query:
         query += " AND location LIKE ?"
         params.append('%' + city_query + '%')
+    if min_price:
+        query += " AND price >= ?"
+        params.append(min_price)
     if max_price:
         query += " AND price <= ?"
         params.append(max_price)
@@ -164,8 +193,7 @@ def buyer():
     properties = conn.execute(query, params).fetchall()
     conn.close()
 
-    return render_template("buyer.html", properties=properties, search_term=city_query, max_price=max_price)
-
+    return render_template("buyer.html", properties=properties, search_term=city_query, min_price=min_price, max_price=max_price)
 
 @app.route("/book/<int:property_id>", methods=["POST"])
 def book(property_id):

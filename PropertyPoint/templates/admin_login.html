@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Access | PropertyPoint Gold</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-body" style="background: linear-gradient(rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.98)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed; background-size: cover;">
+
+<div class="login-card" style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <span style="font-size: 3rem; display: block; margin-bottom: 10px;">🔐</span>
+        <h2 style="margin: 0; font-size: 1.8rem;">System Access</h2>
+        <p style="color: #94a3b8; margin-top: 5px;">Authorized personnel only.</p>
+    </div>
+
+    {% if error %}
+        <div style="background: rgba(239, 68, 68, 0.1); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.2); padding: 12px; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; font-weight: 600; font-size: 0.9rem;">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        <label style="color: #cbd5e1;">Admin ID</label>
+        <input type="text" name="username" placeholder="Enter admin username" required style="background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.1); color: white;">
+
+        <label style="color: #cbd5e1;">Security Key</label>
+        <input type="password" name="password" placeholder="Enter password" required style="background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.1); color: white;">
+
+        <input type="hidden" name="role" value="Admin">
+
+        <button type="submit" style="margin-top: 1.5rem; background: var(--accent); color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Authenticate</button>
+    </form>
+
+    <div style="margin-top: 2rem; text-align: center;">
+        <a href="/" style="color: #94a3b8; text-decoration: none; font-size: 0.85rem; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">← Return to Public Portal</a>
+    </div>
+</div>
+
+</body>
+</html>
