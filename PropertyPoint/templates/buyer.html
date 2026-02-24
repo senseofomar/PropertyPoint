@@ -9,21 +9,24 @@
 
 <div style="background: var(--surface); padding: 1.5rem 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-bottom: 3rem; box-shadow: var(--shadow-sm);">
     <form method="GET" action="/buyer" style="display:flex; gap:1.5rem; align-items:flex-end; flex-wrap: wrap;">
-        <div style="flex-grow: 1; min-width: 250px;">
+        <div style="flex-grow: 1; min-width: 200px;">
             <label>Location</label>
             <input type="text" name="city" placeholder="Search city..." value="{{ search_term if search_term }}" style="margin: 0;">
         </div>
-        <div style="width: 280px;">
-            <label>Maximum Price</label>
-            <select name="max_price" style="margin: 0;">
-                <option value="">Any Price</option>
-                <option value="5000000" {% if max_price == 5000000 %}selected{% endif %}>Under 50 Lakhs</option>
-                <option value="10000000" {% if max_price == 10000000 %}selected{% endif %}>Under 1 Crore</option>
-                <option value="20000000" {% if max_price == 20000000 %}selected{% endif %}>Under 2 Crores</option>
-            </select>
+
+        <div style="width: 180px;">
+            <label>Min Price (₹)</label>
+            <input type="number" name="min_price" placeholder="e.g. 1000000" value="{{ min_price if min_price }}" style="margin: 0;">
         </div>
+
+        <div style="width: 180px;">
+            <label>Max Price (₹)</label>
+            <input type="number" name="max_price" placeholder="e.g. 15000000" value="{{ max_price if max_price }}" style="margin: 0;">
+        </div>
+
         <button type="submit" style="width: auto; padding: 14px 35px;">Search</button>
-        <a href="/buyer" class="btn-small" style="padding: 13px 20px;">Clear Filter</a>
+        <a href="/buyer" class="btn-small" style="padding: 13px 20px;">Clear</a>
+
         <a href="/my_bookings" class="btn-small" style="margin-left: auto; padding: 13px 20px; background: var(--primary); color: white; border-color: var(--primary);">My Bookings</a>
     </form>
 </div>
