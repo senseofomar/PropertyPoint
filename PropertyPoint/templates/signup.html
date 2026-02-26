@@ -1,61 +1,123 @@
-{% extends "layout.html" %}
-{% block title %}Join PropertyPoint Gold{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Join | PropertyPoint Gold</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body { margin: 0; padding: 0; overflow-x: hidden; background: var(--surface); }
+        .split-container { display: flex; min-height: 100vh; }
 
-{% block content %}
-<div class="auth-body" style="margin: -3rem -2rem; min-height: calc(100vh - 70px);">
-    <div class="login-card">
-        <h1 style="text-align: center; margin-bottom: 10px;">✨ Join the Network</h1>
-        <p style="text-align: center; margin-bottom: 2rem;">Create your premium real estate account.</p>
+        .split-left {
+            flex: 1.2;
+            /* Third unique luxury image for the signup page */
+            background: linear-gradient(to right, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.3)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            display: flex; flex-direction: column; padding: 4rem 10%; color: white;
+            box-shadow: inset -10px 0 20px rgba(0,0,0,0.1);
+        }
 
-        {% if error %}
-            <div style="background: #fef2f2; color: var(--danger); padding: 12px; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; font-weight: 600; font-size: 0.9rem;">
-                {{ error }}
+        .brand-logo-white {
+            font-size: 1.8rem; font-weight: 800; color: white;
+            display: flex; align-items: center; gap: 8px; margin-bottom: auto; text-decoration: none;
+        }
+        .brand-logo-white::after {
+            content: ''; display: inline-block; width: 8px; height: 8px;
+            background: var(--accent); border-radius: 50%;
+        }
+
+        .hero-text-container { margin-bottom: auto; }
+        .hero-text-container h1 { font-size: 4rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.1; letter-spacing: -1px; }
+        .hero-text-container p { font-size: 1.3rem; color: #cbd5e1; max-width: 450px; line-height: 1.6; }
+
+        .split-right {
+            flex: 1; background: var(--surface); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 2rem;
+        }
+
+        .form-wrapper { width: 100%; max-width: 420px; }
+
+        .divider { display: flex; align-items: center; text-align: center; margin: 2rem 0; color: var(--text-muted); font-size: 0.9rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
+        .divider::before { margin-right: 1em; }
+        .divider::after { margin-left: 1em; }
+
+        @media (max-width: 960px) {
+            .split-container { flex-direction: column; }
+            .split-left { flex: none; padding: 3rem 2rem; min-height: 40vh; }
+            .hero-text-container h1 { font-size: 2.8rem; }
+            .split-right { padding: 4rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="split-container">
+    <div class="split-left">
+        <a href="/" class="brand-logo-white">PropertyPoint Gold</a>
+        <div class="hero-text-container">
+            <h1>Join the<br>exclusive<br>network.</h1>
+            <p>List your premium properties or find your next luxury home today.</p>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="split-right">
+        <div class="form-wrapper">
+            
+            <div style="margin-bottom: 2rem;">
+                <h2 style="font-size: 2rem; margin: 0 0 10px 0; color: var(--primary); font-weight: 800;">Create Account</h2>
+                <p style="color: var(--text-muted); margin: 0;">Fill in your details to get started.</p>
             </div>
-        {% endif %}
 
-        <form method="POST">
-            <label>Choose a Username</label>
-            <input type="text" name="username" placeholder="e.g. JohnDoe" required>
+            {% if error %}
+                <div style="background: #fef2f2; color: var(--danger); padding: 12px; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; font-weight: 600; font-size: 0.9rem; border: 1px solid #fecaca;">
+                    {{ error }}
+                </div>
+            {% endif %}
 
-            <label>Create a Password</label>
-            <div class="password-wrapper">
-                <input type="password" id="pw" name="password" placeholder="••••••••" required>
-                <span class="eye-icon" onclick="togglePassword('pw', this)">👁️</span>
+            <form method="POST">
+                <input type="text" name="username" placeholder="Choose a Username" required style="margin-bottom: 1.25rem;">
+                
+                <div class="password-wrapper" style="margin-bottom: 1.25rem;">
+                    <input type="password" id="pw" name="password" placeholder="Create a Password" required style="margin-bottom: 0;">
+                    <span class="eye-icon" onclick="togglePassword('pw', this)">👁️</span>
+                </div>
+
+                <div class="password-wrapper" style="margin-bottom: 1.25rem;">
+                    <input type="password" id="cpw" name="confirm_password" placeholder="Confirm Password" required style="margin-bottom: 0;">
+                    <span class="eye-icon" onclick="togglePassword('cpw', this)">👁️</span>
+                </div>
+
+                <select name="role" required style="margin-bottom: 1.5rem; color: var(--text-muted);">
+                    <option value="" disabled selected>I want to register as a...</option>
+                    <option value="Buyer">Buyer (Looking for property)</option>
+                    <option value="Seller">Seller (Listing property)</option>
+                </select>
+
+                <button type="submit" style="background: #059669; color: white; font-weight: 700; font-size: 1.1rem; border-radius: var(--radius-md); padding: 14px;">Sign Up</button>
+            </form>
+
+            <div class="divider">or</div>
+
+            <div style="text-align: center;">
+                <p style="font-size: 0.95rem; color: var(--text-muted); margin: 0;">
+                    Already have an account? <a href="/" style="color: #1877f2; text-decoration: none; font-weight: 700;">Log in here</a>
+                </p>
             </div>
-
-            <label>Confirm Password</label>
-            <div class="password-wrapper">
-                <input type="password" id="cpw" name="confirm_password" placeholder="••••••••" required>
-                <span class="eye-icon" onclick="togglePassword('cpw', this)">👁️</span>
-            </div>
-
-            <label>I want to register as a:</label>
-            <select name="role">
-                <option value="Buyer">Buyer (Looking for property)</option>
-                <option value="Seller">Seller (Listing property)</option>
-            </select>
-
-            <button type="submit" style="margin-top: 1rem;">Create Account</button>
-        </form>
-
-        <p style="margin-top:2rem; text-align: center; font-size: 0.95rem;">
-            Already have an account? <a href="/" style="color: var(--accent); text-decoration: none; font-weight: 700;">Login here</a>
-        </p>
+        </div>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
 function togglePassword(inputId, icon) {
     const input = document.getElementById(inputId);
     if (input.type === "password") {
         input.type = "text";
-        icon.innerText = "🙈";
+        icon.innerText = "🙈"; 
     } else {
         input.type = "password";
-        icon.innerText = "👁️";
+        icon.innerText = "👁️"; 
     }
 }
 </script>
-{% endblock %}
+</body>
+</html>
