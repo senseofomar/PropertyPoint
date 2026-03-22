@@ -1,0 +1,145 @@
+{% extends "layout.html" %}
+{% block title %}Find Properties{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <h1>Discover Excellence.</h1>
+    <p>Explore exclusive, premium listings across top-tier cities tailored to your lifestyle.</p>
+</div>
+
+<div style="background: var(--surface); padding: 1.5rem 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-bottom: 3rem; box-shadow: var(--shadow-sm);">
+    <form method="GET" action="/buyer" style="display:flex; gap:1.5rem; align-items:flex-end; flex-wrap: wrap;">
+        <div style="flex-grow: 1; min-width: 200px;">
+            <label>Location</label>
+            <input type="text" name="city" placeholder="Search city..." value="{{ search_term if search_term }}" style="margin: 0;">
+        </div>
+
+        <div style="width: 180px;">
+            <label>Min Price (₹)</label>
+            <input type="number" name="min_price" placeholder="e.g. 1000000" value="{{ min_price if min_price }}" style="margin: 0;">
+        </div>
+
+        <div style="width: 180px;">
+            <label>Max Price (₹)</label>
+            <input type="number" name="max_price" placeholder="e.g. 15000000" value="{{ max_price if max_price }}" style="margin: 0;">
+        </div>
+
+        <button type="submit" style="width: auto; padding: 14px 35px;">Search</button>
+        <a href="/buyer" class="btn-small" style="padding: 13px 20px;">Clear</a>
+
+        <a href="/my_bookings" class="btn-small" style="margin-left: auto; padding: 13px 20px; background: var(--primary); color: white; border-color: var(--primary);">My Bookings</a>
+    </form>
+</div>
+
+<div id="details-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+            <h2 id="modal-title" style="margin: 0; font-size: 1.8rem;">Title</h2>
+            <span style="cursor: pointer; font-size: 2rem; color: var(--text-muted); line-height: 1; transition: color 0.2s;" onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='var(--text-muted)'" onclick="document.getElementById('details-modal').classList.remove('active')">&times;</span>
+        </div>
+        <p class="location" style="color: var(--text-muted); margin-bottom: 1.5rem; font-weight: 500;">📍 <span id="modal-location">Location</span></p>
+
+        <div style="background: var(--bg-page); padding: 1.8rem; border-radius: var(--radius-md); margin-bottom: 2.5rem; border: 1px solid var(--border);">
+            <p id="modal-desc" style="margin: 0; line-height: 1.8; color: var(--text-main); font-size: 1.05rem;"></p>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+            <h3 id="modal-price" style="margin: 0; font-size: 2rem; color: var(--accent);">₹ 0</h3>
+            <button id="modal-book-btn" style="width: auto; padding: 14px 35px;">Request Visit</button>
+        </div>
+    </div>
+</div>
+
+<div id="js-flash-modal" class="modal-overlay">
+    <div class="modal-content" style="text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem; color: var(--success);">✓</div>
+        <h2 style="margin-top: 0;">Request Sent</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem;">Our premium agent will contact you shortly to confirm your visit schedule.</p>
+        <button onclick="document.getElementById('js-flash-modal').classList.remove('active')">Done</button>
+    </div>
+</div>
+
+<div class="property-grid">
+    {% for p in properties %}
+    <div class="card" id="property-{{ p['id'] }}">
+        <div class="card-img-wrapper">
+            <span class="card-badge">{{ p['type'] }}</span>
+            {% if p['img_url'] %}
+                <img src="{{ url_for('static', filename='uploads/' + p['img_url']) }}">
+            {% else %}
+                {% set img_url = "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=800&auto=format&fit=crop" %}
+                {% if p['type'] == 'Villa' %}{% set img_url = "https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=800&auto=format&fit=crop" %}
+                {% elif p['type'] == 'Plot' %}{% set img_url = "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800&auto=format&fit=crop" %}
+                {% elif p['type'] == 'Apartment' %}{% set img_url = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=800&auto=format&fit=crop" %}
+                {% endif %}
+                <img src="{{ img_url }}">
+            {% endif %}
+        </div>
+
+        <div class="card-content">
+            <h3>{{ p['title'] }}</h3>
+            <p class="location">📍 {{ p['location'] }}</p>
+            <p class="price">₹ {{ "{:,}".format(p['price']) }}</p>
+
+            <div style="display: flex; gap: 12px; margin-top: auto;">
+                <button type="button" class="btn-small" style="flex: 1;"
+                        onclick="openDetails(`{{ p['title'] }}`, `{{ p['location'] }}`, `{{ p['price'] }}`, `{{ p['type'] }}`, {{ p['id'] }}, `{{ p['description'] }}`)">
+                    View Details
+                </button>
+                <button type="button" class="book-btn" style="flex: 1;" onclick="scheduleVisit({{ p['id'] }})">Book Visit</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openDetails(title, location, price, type, id, description) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-location').innerText = location;
+    document.getElementById('modal-price').innerText = '₹ ' + parseInt(price).toLocaleString('en-IN');
+    document.getElementById('modal-desc').innerText = description || "Premium property with modern amenities and scenic views.";
+    const bookBtn = document.getElementById('modal-book-btn');
+    bookBtn.setAttribute('onclick', `scheduleVisit(${id}); document.getElementById('details-modal').classList.remove('active');`);
+    document.getElementById('details-modal').classList.add('active');
+}
+
+function scheduleVisit(id) {
+    const btn = document.querySelector(`#property-${id} .book-btn`);
+    const originalText = btn ? btn.innerText : "Book Visit";
+
+    if (btn) {
+        btn.innerText = "Processing...";
+        btn.disabled = true;
+    }
+
+    fetch(`/book/${id}`, {method:'POST'})
+    .then(r => r.json())
+    .then(data => {
+        if(data.success) {
+            if (btn) {
+                btn.innerText = "Requested ✓";
+                btn.style.background = "var(--success)";
+                btn.style.color = "white";
+            }
+            document.getElementById('js-flash-modal').classList.add('active');
+        } else {
+            alert(data.error || "Failed to schedule visit.");
+            if (btn) {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+    })
+    .catch(err => {
+        console.error("Booking error:", err);
+        if (btn) {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    });
+}
+</script>
+{% endblock %}

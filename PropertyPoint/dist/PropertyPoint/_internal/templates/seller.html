@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+{% block title %}Seller Dashboard{% endblock %}
+
+{% block content %}
+<div class="hero-section" style="padding: 3rem; margin-bottom: 2.5rem; background-image: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.6)), url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2000&auto=format&fit=crop');">
+    <h1 style="font-size: 2.5rem;">Seller Dashboard</h1>
+    <p>Manage your premium portfolio and add new listings seamlessly.</p>
+</div>
+
+<div style="display: flex; gap: 3.5rem; align-items: flex-start; flex-wrap: wrap;">
+
+    <div style="background: var(--surface); padding: 2.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); width: 100%; max-width: 420px; flex-shrink: 0; position: sticky; top: 120px; box-shadow: var(--shadow-lg);">
+        <h2 style="margin-top: 0; margin-bottom: 2rem; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">➕</span> List New Property
+        </h2>
+        <form method="POST" enctype="multipart/form-data">
+            <label>Property Title</label>
+            <input type="text" name="title" placeholder="e.g. Luxury Villa in Westside" required>
+
+            <label>City</label>
+            <input type="text" name="location" placeholder="e.g. Mumbai" required>
+
+            <label>Price (₹)</label>
+            <input type="number" name="price" placeholder="e.g. 15000000" required>
+
+            <label>Property Type</label>
+            <select name="type" required>
+                <option value="" disabled selected>Select Classification...</option>
+                <option>Apartment</option><option>Villa</option><option>Commercial Office</option>
+                <option>Plot</option><option>Penthouse</option><option>Farmhouse</option>
+            </select>
+
+            <label>Property Description</label>
+            <textarea name="description" rows="4" placeholder="Highlight key features, luxury amenities, and scenic views..." required></textarea>
+
+            <label>Upload High-Res Image</label>
+            <input type="file" name="image" accept="image/*" required style="padding: 10px; background: var(--surface);">
+
+            <button type="submit" style="margin-top: 1rem; padding: 16px;">Publish Listing</button>
+        </form>
+    </div>
+
+    <div style="flex-grow: 1; min-width: 300px;">
+        <h2 style="margin-top: 0; margin-bottom: 2rem; font-weight: 800;">Your Active Portfolio</h2>
+        <div class="property-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+            {% for p in properties %}
+            <div class="card" id="my-property-{{ p['id'] }}">
+                <div class="card-img-wrapper">
+                    {% if p['img_url'] %}
+                        <img src="{{ url_for('static', filename='uploads/' + p['img_url']) }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=800&auto=format&fit=crop">
+                    {% endif %}
+                </div>
+                <div class="card-content">
+                    <h3>{{ p['title'] }}</h3>
+                    <p class="location">📍 {{ p['location'] }}</p>
+                    <p class="price">₹ {{ "{:,}".format(p['price']) }}</p>
+                    <button type="button" onclick="deleteMyProperty({{ p['id'] }})" class="btn-small" style="color: var(--danger); width: 100%; border-color: #fca5a5; background: #fef2f2; margin-top: auto;">Remove Listing</button>
+                </div>
+            </div>
+            {% else %}
+            <div style="grid-column: 1 / -1; padding: 4rem; text-align: center; background: var(--surface); border-radius: var(--radius-lg); border: 2px dashed var(--border);">
+                <span style="font-size: 3rem;">🏢</span>
+                <h3 style="margin-top: 1rem;">No properties listed yet</h3>
+                <p style="color: var(--text-muted);">Use the form on the left to add your first premium property.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deleteMyProperty(id) {
+    if(confirm("Are you sure you want to permanently remove this listing?")) {
+        fetch(`/seller/delete/${id}`, { method: 'POST' }).then(r => r.json()).then(data => {
+            if(data.success) {
+                const el = document.getElementById(`my-property-${id}`);
+                el.style.transform = 'scale(0.9)';
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 300);
+            }
+        });
+    }
+}
+</script>
+{% endblock %}
