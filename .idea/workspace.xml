@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5a0ae39c-199a-47f9-aa64-088a90116211" name="Changes" comment="final polish">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PropertyPoint/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/PropertyPoint/database.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,7 +106,15 @@
       <workItem from="1771945046619" duration="35000" />
       <workItem from="1772021772790" duration="29000" />
       <workItem from="1772098201362" duration="600000" />
-      <workItem from="1772124934644" duration="582000" />
+      <workItem from="1772124934644" duration="2116000" />
+      <workItem from="1772526948297" duration="786000" />
+      <workItem from="1772531979832" duration="1764000" />
+      <workItem from="1773512894350" duration="1312000" />
+      <workItem from="1773565312207" duration="680000" />
+      <workItem from="1773833884142" duration="65000" />
+      <workItem from="1773867672179" duration="2326000" />
+      <workItem from="1773900380391" duration="1755000" />
+      <workItem from="1773904312660" duration="1302000" />
     </task>
     <task id="LOCAL-00001" summary="property point">
       <option name="closed" value="true" />
@@ -346,7 +356,39 @@
       <option name="project" value="LOCAL" />
       <updated>1772021793095</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="final polish">
+      <option name="closed" value="true" />
+      <created>1772125524890</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1772125524890</updated>
+    </task>
+    <task id="LOCAL-00032" summary="final polish">
+      <option name="closed" value="true" />
+      <created>1772125535110</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1772125535110</updated>
+    </task>
+    <task id="LOCAL-00033" summary="final polish">
+      <option name="closed" value="true" />
+      <created>1772125822519</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1772125822519</updated>
+    </task>
+    <task id="LOCAL-00034" summary="final polish">
+      <option name="closed" value="true" />
+      <created>1772125827710</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1772125827710</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -369,6 +411,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PropertyPoint$database.coverage" NAME="database Coverage Results" MODIFIED="1771349985787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/PropertyPoint$app.coverage" NAME="app Coverage Results" MODIFIED="1772098216108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PropertyPoint" />
+    <SUITE FILE_PATH="coverage/PropertyPoint$app.coverage" NAME="app Coverage Results" MODIFIED="1773867687775" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PropertyPoint" />
   </component>
 </project>
