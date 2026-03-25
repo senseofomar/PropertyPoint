@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a0ae39c-199a-47f9-aa64-088a90116211" name="Changes" comment="final polish">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PropertyPoint/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/PropertyPoint/database.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-    </list>
+    <list default="true" id="5a0ae39c-199a-47f9-aa64-088a90116211" name="Changes" comment="final polish" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -115,6 +111,7 @@
       <workItem from="1773867672179" duration="2326000" />
       <workItem from="1773900380391" duration="1755000" />
       <workItem from="1773904312660" duration="1302000" />
+      <workItem from="1774198685942" duration="49000" />
     </task>
     <task id="LOCAL-00001" summary="property point">
       <option name="closed" value="true" />
@@ -388,7 +385,31 @@
       <option name="project" value="LOCAL" />
       <updated>1772125827710</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="final polish">
+      <option name="closed" value="true" />
+      <created>1774198693220</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1774198693220</updated>
+    </task>
+    <task id="LOCAL-00036" summary="final polish">
+      <option name="closed" value="true" />
+      <created>1774198698001</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1774198698001</updated>
+    </task>
+    <task id="LOCAL-00037" summary="final polish">
+      <option name="closed" value="true" />
+      <created>1774198715804</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1774198715804</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
