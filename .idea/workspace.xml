@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a0ae39c-199a-47f9-aa64-088a90116211" name="Changes" comment="admin page changes">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="5a0ae39c-199a-47f9-aa64-088a90116211" name="Changes" comment="login page" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -116,6 +114,7 @@
       <workItem from="1774198685942" duration="49000" />
       <workItem from="1774458349514" duration="725000" />
       <workItem from="1774459389303" duration="22000" />
+      <workItem from="1774545969183" duration="299000" />
     </task>
     <task id="LOCAL-00001" summary="property point">
       <option name="closed" value="true" />
@@ -453,7 +452,39 @@
       <option name="project" value="LOCAL" />
       <updated>1774458450157</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="database changes">
+      <option name="closed" value="true" />
+      <created>1774546005738</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1774546005738</updated>
+    </task>
+    <task id="LOCAL-00044" summary="database changes">
+      <option name="closed" value="true" />
+      <created>1774546014602</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1774546014602</updated>
+    </task>
+    <task id="LOCAL-00045" summary="login page">
+      <option name="closed" value="true" />
+      <created>1774546215129</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1774546215129</updated>
+    </task>
+    <task id="LOCAL-00046" summary="login page">
+      <option name="closed" value="true" />
+      <created>1774546234625</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1774546234625</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -473,7 +504,9 @@
     <MESSAGE value="added the forgot password functionality" />
     <MESSAGE value="final polish" />
     <MESSAGE value="admin page changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="admin page changes" />
+    <MESSAGE value="database changes" />
+    <MESSAGE value="login page" />
+    <option name="LAST_COMMIT_MESSAGE" value="login page" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PropertyPoint$database.coverage" NAME="database Coverage Results" MODIFIED="1771349985787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
