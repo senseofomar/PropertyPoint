@@ -74,7 +74,6 @@ def init_db():
 
 init_db()
 
-
 # --- AUTHENTICATION ROUTES ---
 @app.route("/", methods=["GET", "POST"])
 def login():
