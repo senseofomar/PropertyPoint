@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}PropertyPoint Gold{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="logo">PropertyPoint Gold</div>
+    <div class="nav-links">
+        {% if session.get('user') %}
+            <span style="color: var(--text-muted); font-weight: 500;">Welcome, <strong style="color: var(--primary);">{{ session['user'] }}</strong></span>
+            <span class="badge" style="background: var(--bg-page); border: 1px solid var(--border); color: var(--primary);">{{ session['role'] }}</span>
+            <a href="/logout" class="btn-small">Logout</a>
+        {% endif %}
+    </div>
+</nav>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div id="flash-modal" class="modal-overlay active">
+        <div class="modal-content" style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem; color: var(--success);">✓</div>
+            <h2 style="margin-top: 0;">Success</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 1.1rem;">{{ messages[0] }}</p>
+            <button onclick="document.getElementById('flash-modal').classList.remove('active')">Continue</button>
+        </div>
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+<footer style="text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.95rem; border-top: 1px solid var(--border); background: var(--surface); margin-top: auto;">
+    <strong>PropertyPoint Gold</strong> &copy; 2026 | Premium Real Estate Network
+</footer>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>
