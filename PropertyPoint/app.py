@@ -75,6 +75,50 @@ def init_db():
 init_db()
 
 
+# --- AUTHENTICATION ROUTES ---
+@app.route("/", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username, password, role = request.form["username"], request.form["password"], request.form["role"]
+        conn = get_db()
+        user = conn.execute("SELECT * FROM users WHERE username=? AND role=?", (username, role)).fetchone()
+        conn.close()
+        if user and check_password_hash(user['password'], password):
+            session["user"], session["role"] = username, role
+            return redirect(f"/{role.lower()}")
+        return render_template("login.html", error="Invalid credentials")
+    return render_template("login.html")
+
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form["username"]
+        pw = request.form["password"]
+        confirm_pw = request.form.get("confirm_password") # NEW
+        role = request.form["role"]
+
+        # Backend validation for matching passwords
+        if pw != confirm_pw:
+            return render_template("signup.html", error="Passwords do not match. Please try again.")
+
+        conn = get_db()
+        try:
+            conn.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+                         (username, generate_password_hash(pw), role))
+            conn.commit()
+            flash("Account created successfully! Please log in.")
+            return redirect("/")
+        except sqlite3.IntegrityError:
+            return render_template("signup.html", error="Username already exists")
+        finally:
+            conn.close()
+    return render_template("signup.html")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
 
 
 @app.route("/admin-portal", methods=["GET", "POST"])
