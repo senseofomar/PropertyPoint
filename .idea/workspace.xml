@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a0ae39c-199a-47f9-aa64-088a90116211" name="Changes" comment="login page" />
+    <list default="true" id="5a0ae39c-199a-47f9-aa64-088a90116211" name="Changes" comment="layout page">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -115,22 +117,8 @@
       <workItem from="1774458349514" duration="725000" />
       <workItem from="1774459389303" duration="22000" />
       <workItem from="1774545969183" duration="299000" />
-    </task>
-    <task id="LOCAL-00001" summary="property point">
-      <option name="closed" value="true" />
-      <created>1771151597334</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1771151597334</updated>
-    </task>
-    <task id="LOCAL-00002" summary="property point">
-      <option name="closed" value="true" />
-      <created>1771258029716</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1771258029716</updated>
+      <workItem from="1774551975331" duration="153000" />
+      <workItem from="1774705934773" duration="215000" />
     </task>
     <task id="LOCAL-00003" summary="property point">
       <option name="closed" value="true" />
@@ -484,7 +472,47 @@
       <option name="project" value="LOCAL" />
       <updated>1774546234625</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="layout page">
+      <option name="closed" value="true" />
+      <created>1774552006584</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1774552006584</updated>
+    </task>
+    <task id="LOCAL-00048" summary="layout page">
+      <option name="closed" value="true" />
+      <created>1774552018648</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1774552018648</updated>
+    </task>
+    <task id="LOCAL-00049" summary="layout page">
+      <option name="closed" value="true" />
+      <created>1774552096904</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1774552096904</updated>
+    </task>
+    <task id="LOCAL-00050" summary="layout page">
+      <option name="closed" value="true" />
+      <created>1774552108488</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1774552108488</updated>
+    </task>
+    <task id="LOCAL-00051" summary="layout page">
+      <option name="closed" value="true" />
+      <created>1774552121358</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1774552121358</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -506,7 +534,8 @@
     <MESSAGE value="admin page changes" />
     <MESSAGE value="database changes" />
     <MESSAGE value="login page" />
-    <option name="LAST_COMMIT_MESSAGE" value="login page" />
+    <MESSAGE value="layout page" />
+    <option name="LAST_COMMIT_MESSAGE" value="layout page" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PropertyPoint$database.coverage" NAME="database Coverage Results" MODIFIED="1771349985787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
